@@ -1,15 +1,30 @@
-/* This program fits the GEE on the population level and get the true coefficients for inference */
-%let homepath=/work/users/a/q/aquijano/HCHS/v3;
-*%let popfile="/work/users/a/k/aku/sim/v3data/set14/population_3visits_Mar2021_missind.csv";
-%let popfile="/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv";
+*********************************************************************************************************
+        
+        PROGRAM NAME: pop_cont_genmod.sas
 
-libname home "&homepath";
+        SOURCE:        Wenyi's code + Alex updates
 
-libname output "&homepath./sasdata";
+        DESCRIPTION:   This program fits the GEE on the population level and get the true coefficients for inference 
 
+        VERSION CONTROL:
+                        01.24.25 Include headers, comments and update the code to make it clear
+
+*********************************************************************************************************;
+* Set system options;
 OPTIONS MERGENOBY=WARN LS=95 PS=54 NODATE MPRINT
         formchar="|----|+|---+=|-/\<>*";
 
+* Macro variable that create path to my folder ;
+%let homepath=/work/users/a/q/aquijano/HCHS/v3;
+
+* Path to Beibo's folder that contains the simulated population data;
+%let popfile="/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv";
+
+* Call libraries in;
+libname home "&homepath";
+libname output "&homepath./sasdata";
+
+* Import the dataset;
 proc import datafile=&popfile out=pop_data(keep=bgid hhid subid y_bmi y_gfr x12
         x17 x18 x14 x6 age_base strat hisp_strat v_num) dbms=csv replace;
         getnames=yes;

@@ -1,0 +1,19 @@
+Building DAG of jobs...
+Using shell: /usr/bin/bash
+Provided cores: 1 (use --cores to define parallelism)
+Rules claiming more threads will be scaled down.
+Job counts:
+	count	jobs
+	1	test
+	1
+
+[Fri Jan 24 17:09:30 2025]
+rule test:
+    input: v3/sasdata/betas_pop_genmod_exch.sas7bdat
+    output: output.sas7bdat
+    jobid: 0
+
+[Fri Jan 24 17:09:31 2025]
+Finished job 0.
+1 of 1 steps (100%) done
+Complete log: /work/users/a/q/aquijano/HCHS/.snakemake/log/2025-01-24T170930.811125.snakemake.log

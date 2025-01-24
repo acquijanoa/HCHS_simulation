@@ -1,4 +1,4 @@
-1                                                          The SAS System                             14:31 Friday, January 24, 2025
+1                                                          The SAS System                             17:18 Friday, January 24, 2025
 
 ERROR: Expecting page 1, got page -1 instead.
 ERROR: Page validation error while reading SASUSER.PROFILE.CATALOG.
@@ -43,131 +43,146 @@ The command line option "-nonews" will prevent this display.
 
 
 NOTE: SAS initialization used:
-      real time           0.33 seconds
-      cpu time            0.05 seconds
+      real time           0.32 seconds
+      cpu time            0.04 seconds
       
-1          /* This program fits the GEE on the population level and get the true coefficients for inference */
-2          %let homepath=/work/users/a/q/aquijano/HCHS/v3;
-3          *%let popfile="/work/users/a/k/aku/sim/v3data/set14/population_3visits_Mar2021_missind.csv";
-4          %let popfile="/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv";
-5          
-6          libname home "&homepath";
+1          *********************************************************************************************************
+2          
+3                  PROGRAM NAME: pop_cont_genmod.sas
+4          
+5                  SOURCE:        Wenyi's code + Alex updates
+6          
+7                  DESCRIPTION:   This program fits the GEE on the population level and get the true coefficients for inference
+8          
+9                  VERSION CONTROL:
+10                                 01.24.25 Include headers, comments and update the code to make it clear
+11         
+12         *********************************************************************************************************;
+2                                                          The SAS System                             17:18 Friday, January 24, 2025
+
+13         * Set system options;
+14         OPTIONS MERGENOBY=WARN LS=95 PS=54 NODATE MPRINT
+15                 formchar="|----|+|---+=|-/\<>*";
+16         
+17         * Macro variable that create path to my folder ;
+18         %let homepath=/work/users/a/q/aquijano/HCHS/v3;
+19         
+20         * Path to Beibo's folder that contains the simulated population data;
+21         %let popfile="/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv";
+22         
+23         * Call libraries in;
+24         libname home "&homepath";
 NOTE: Libref HOME was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: /work/users/a/q/aquijano/HCHS/v3
-7          
-8          libname output "&homepath./sasdata";
+25         libname output "&homepath./sasdata";
 NOTE: Libref OUTPUT was successfully assigned as follows: 
-2                                                          The SAS System                             14:31 Friday, January 24, 2025
-
       Engine:        V9 
       Physical Name: /work/users/a/q/aquijano/HCHS/v3/sasdata
-9          
-10         OPTIONS MERGENOBY=WARN LS=95 PS=54 NODATE MPRINT
-11                 formchar="|----|+|---+=|-/\<>*";
-12         
-13         proc import datafile=&popfile out=pop_data(keep=bgid hhid subid y_bmi y_gfr x12
-14                 x17 x18 x14 x6 age_base strat hisp_strat v_num) dbms=csv replace;
-15                 getnames=yes;
-16                 guessingrows=100;
-17         run;
+26         
+27         * Import the dataset;
+28         proc import datafile=&popfile out=pop_data(keep=bgid hhid subid y_bmi y_gfr x12
+29                 x17 x18 x14 x6 age_base strat hisp_strat v_num) dbms=csv replace;
+30                 getnames=yes;
+31                 guessingrows=100;
+32         run;
 
-18          /**********************************************************************
-19          *   PRODUCT:   SAS
-20          *   VERSION:   9.4
-21          *   CREATOR:   External File Interface
-22          *   DATE:      24JAN25
-23          *   DESC:      Generated SAS Datastep Code
-24          *   TEMPLATE SOURCE:  (None Specified.)
-25          ***********************************************************************/
-26             data WORK.POP_DATA (keep=bgid hhid subid y_bmi y_gfr x12         x17 x18 x14 x6
-26       ! age_base strat hisp_strat v_num)   ;
-27             %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
-28             infile '/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv' delimiter =
-28       !  ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
-29                informat strat best32. ;
-30                informat BGid best32. ;
-31                informat hhid best32. ;
-32                informat subid best32. ;
-33                informat v_num best32. ;
-34                informat hisp_strat $4. ;
-35                informat age_base best32. ;
-36                informat age_strat $5. ;
-37                informat x0 best32. ;
-38                informat x1 best32. ;
-39                informat x2 best32. ;
-40                informat x3 best32. ;
-41                informat x4 best32. ;
-42                informat x6 best32. ;
-43                informat x8 best32. ;
-44                informat x12 best32. ;
-45                informat x13 best32. ;
-46                informat x14 best32. ;
-47                informat x15 best32. ;
-48                informat x17 best32. ;
-49                informat x18 best32. ;
-50                informat y_bmi best32. ;
-51                informat y_gfr best32. ;
-52                informat y_bin_gfr best32. ;
-53                format strat best12. ;
-54                format BGid best12. ;
-55                format hhid best12. ;
+33          /**********************************************************************
+34          *   PRODUCT:   SAS
+35          *   VERSION:   9.4
+36          *   CREATOR:   External File Interface
+37          *   DATE:      24JAN25
+38          *   DESC:      Generated SAS Datastep Code
+39          *   TEMPLATE SOURCE:  (None Specified.)
+40          ***********************************************************************/
+41             data WORK.POP_DATA (keep=bgid hhid subid y_bmi y_gfr x12         x17 x18 x14 x6
+41       ! age_base strat hisp_strat v_num)   ;
+42             %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+43             infile '/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv' delimiter =
+43       !  ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+44                informat strat best32. ;
+45                informat BGid best32. ;
+46                informat hhid best32. ;
+47                informat subid best32. ;
+48                informat v_num best32. ;
+49                informat hisp_strat $4. ;
+50                informat age_base best32. ;
+51                informat age_strat $5. ;
+52                informat x0 best32. ;
+53                informat x1 best32. ;
+54                informat x2 best32. ;
+55                informat x3 best32. ;
 3                                       The SAS System
 
-56                format subid best12. ;
-57                format v_num best12. ;
-58                format hisp_strat $4. ;
-59                format age_base best12. ;
-60                format age_strat $5. ;
-61                format x0 best12. ;
-62                format x1 best12. ;
-63                format x2 best12. ;
-64                format x3 best12. ;
-65                format x4 best12. ;
-66                format x6 best12. ;
-67                format x8 best12. ;
-68                format x12 best12. ;
-69                format x13 best12. ;
-70                format x14 best12. ;
-71                format x15 best12. ;
-72                format x17 best12. ;
-73                format x18 best12. ;
-74                format y_bmi best12. ;
-75                format y_gfr best12. ;
-76                format y_bin_gfr best12. ;
-77             input
-78                         strat
-79                         BGid
-80                         hhid
-81                         subid
-82                         v_num
-83                         hisp_strat  $
-84                         age_base
-85                         age_strat  $
-86                         x0
-87                         x1
-88                         x2
-89                         x3
-90                         x4
-91                         x6
-92                         x8
-93                         x12
-94                         x13
-95                         x14
-96                         x15
-97                         x17
-98                         x18
-99                         y_bmi
-100                        y_gfr
-101                        y_bin_gfr
-102            ;
-103            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro
-103      ! variable */
-104            run;
-
-NOTE: The infile '/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv' is:
+56                informat x4 best32. ;
+57                informat x6 best32. ;
+58                informat x8 best32. ;
+59                informat x12 best32. ;
+60                informat x13 best32. ;
+61                informat x14 best32. ;
+62                informat x15 best32. ;
+63                informat x17 best32. ;
+64                informat x18 best32. ;
+65                informat y_bmi best32. ;
+66                informat y_gfr best32. ;
+67                informat y_bin_gfr best32. ;
+68                format strat best12. ;
+69                format BGid best12. ;
+70                format hhid best12. ;
+71                format subid best12. ;
+72                format v_num best12. ;
+73                format hisp_strat $4. ;
+74                format age_base best12. ;
+75                format age_strat $5. ;
+76                format x0 best12. ;
+77                format x1 best12. ;
+78                format x2 best12. ;
+79                format x3 best12. ;
+80                format x4 best12. ;
+81                format x6 best12. ;
+82                format x8 best12. ;
+83                format x12 best12. ;
+84                format x13 best12. ;
+85                format x14 best12. ;
+86                format x15 best12. ;
+87                format x17 best12. ;
+88                format x18 best12. ;
+89                format y_bmi best12. ;
+90                format y_gfr best12. ;
+91                format y_bin_gfr best12. ;
+92             input
+93                         strat
+94                         BGid
+95                         hhid
+96                         subid
+97                         v_num
+98                         hisp_strat  $
+99                         age_base
+100                        age_strat  $
+101                        x0
+102                        x1
+103                        x2
+104                        x3
+105                        x4
+106                        x6
+107                        x8
 4                                       The SAS System
 
+108                        x12
+109                        x13
+110                        x14
+111                        x15
+112                        x17
+113                        x18
+114                        y_bmi
+115                        y_gfr
+116                        y_bin_gfr
+117            ;
+118            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro
+118      ! variable */
+119            run;
+
+NOTE: The infile '/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv' is:
       Filename=/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv,
       Owner Name=beibo,Group Name=its_graduate_psx,
       Access Permission=-rw-r--r--,
@@ -180,8 +195,8 @@ NOTE: 3800943 records were read from the infile
       The maximum record length was 177.
 NOTE: The data set WORK.POP_DATA has 3800943 observations and 14 variables.
 NOTE: DATA statement used (Total process time):
-      real time           11.12 seconds
-      cpu time            8.32 seconds
+      real time           6.02 seconds
+      cpu time            5.48 seconds
       
 
 3800943 rows created in WORK.POP_DATA from 
@@ -192,44 +207,44 @@ NOTE: DATA statement used (Total process time):
 NOTE: WORK.POP_DATA data set was successfully created.
 NOTE: The data set WORK.POP_DATA has 3800943 observations and 14 variables.
 NOTE: PROCEDURE IMPORT used (Total process time):
-      real time           11.81 seconds
-      cpu time            8.65 seconds
+      real time           6.86 seconds
+      cpu time            5.69 seconds
       
 
-105        
-106        data pop;
-107                set pop_data;
-108                age_strat_new=1*(age_base>=45);
-109                hisp_strat_new=1*(hisp_strat='TRUE');
-110        run;
+120        
+121        data pop;
+122                set pop_data;
+123                age_strat_new=1*(age_base>=45);
+124                hisp_strat_new=1*(hisp_strat='TRUE');
+125        run;
 
 NOTE: There were 3800943 observations read from the data set WORK.POP_DATA.
 NOTE: The data set WORK.POP has 3800943 observations and 16 variables.
-NOTE: DATA statement used (Total process time):
-      real time           2.68 seconds
-      cpu time            1.11 seconds
-      
-
-111        
-112        %macro pop(type=, m=, mt=);
-113                proc genmod data=pop;
-114                        class subid;
-115                        model y_gfr=x17 x12 x18 y_bmi age_strat_new x6/ dist=normal;
-116                        repeated subject=subid / corr=&type.;
-117                        %if &m.=_miss %then %do;
-118                                where miss_ind&mt.=0;
-119                        %end;
-120                        ods output GEEEmpPEst=output.betas_pop_genmod_&type.&m.&mt.;
 5                                       The SAS System
 
-121                run;
-122        %mend pop;
-123        
-124        ods rtf file="&homepath./output/pop_genmod.rtf";
+NOTE: DATA statement used (Total process time):
+      real time           1.97 seconds
+      cpu time            0.86 seconds
+      
+
+126        
+127        %macro pop(type=, m=, mt=);
+128                proc genmod data=pop;
+129                        class subid;
+130                        model y_gfr=x17 x12 x18 y_bmi age_strat_new x6/ dist=normal;
+131                        repeated subject=subid / corr=&type.;
+132                        %if &m.=_miss %then %do;
+133                                where miss_ind&mt.=0;
+134                        %end;
+135                        ods output GEEEmpPEst=output.betas_pop_genmod_&type.&m.&mt.;
+136                run;
+137        %mend pop;
+138        
+139        ods rtf file="&homepath./output/pop_genmod.rtf";
 NOTE: Writing RTF Body file: /work/users/a/q/aquijano/HCHS/v3/output/pop_genmod.rtf
-125        %let mt= ;
-126        title '[PROC GENMOD]Independent correlation structure';
-127        %pop(type=ind, mt=&mt.);
+140        %let mt= ;
+141        title '[PROC GENMOD]Independent correlation structure';
+142        %pop(type=ind, mt=&mt.);
 MPRINT(POP):   proc genmod data=pop;
 MPRINT(POP):   class subid;
 MPRINT(POP):   model y_gfr=x17 x12 x18 y_bmi age_strat_new x6/ dist=normal;
@@ -242,12 +257,12 @@ NOTE: Algorithm converged.
 NOTE: The data set OUTPUT.BETAS_POP_GENMOD_IND has 7 observations and 7 variables.
 NOTE: The PROCEDURE GENMOD printed pages 1-2.
 NOTE: PROCEDURE GENMOD used (Total process time):
-      real time           39.02 seconds
-      cpu time            36.39 seconds
+      real time           27.10 seconds
+      cpu time            25.25 seconds
       
 
-128        title '[PROC GENMOD]Exchangeable correlation structure';
-129        %pop(type=exch, mt=&mt.);
+143        title '[PROC GENMOD]Exchangeable correlation structure';
+144        %pop(type=exch, mt=&mt.);
 MPRINT(POP):   proc genmod data=pop;
 MPRINT(POP):   class subid;
 MPRINT(POP):   model y_gfr=x17 x12 x18 y_bmi age_strat_new x6/ dist=normal;
@@ -259,17 +274,19 @@ NOTE: Algorithm converged.
 NOTE: Algorithm converged.
 NOTE: The data set OUTPUT.BETAS_POP_GENMOD_EXCH has 7 observations and 7 variables.
 NOTE: The PROCEDURE GENMOD printed pages 3-4.
+6                                       The SAS System
+
 NOTE: PROCEDURE GENMOD used (Total process time):
-      real time           39.45 seconds
-      cpu time            37.78 seconds
+      real time           28.68 seconds
+      cpu time            27.89 seconds
       
 
-130        title;
-131        ods rtf close;
+145        title;
+146        ods rtf close;
 ERROR: Errors printed on page 1.
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           1:33.82
-      cpu time            1:24.30
+      real time           1:05.36
+      cpu time            59.85 seconds
       
