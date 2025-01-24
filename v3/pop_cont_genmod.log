@@ -1,10 +1,5 @@
-1                                                          The SAS System                             11:21 Friday, January 24, 2025
+1                                                          The SAS System                             14:31 Friday, January 24, 2025
 
-NOTE: Unable to open SASUSER.REGSTRY. WORK.REGSTRY will be opened instead.
-NOTE: All registry changes will be lost at the end of the session.
-
-WARNING: Unable to copy SASUSER registry to WORK registry. Because of this, you will not see registry customizations during this 
-         session.
 ERROR: Expecting page 1, got page -1 instead.
 ERROR: Page validation error while reading SASUSER.PROFILE.CATALOG.
 NOTE: Unable to open SASUSER.PROFILE. WORK.PROFILE will be opened instead.
@@ -48,7 +43,7 @@ The command line option "-nonews" will prevent this display.
 
 
 NOTE: SAS initialization used:
-      real time           0.29 seconds
+      real time           0.33 seconds
       cpu time            0.05 seconds
       
 1          /* This program fits the GEE on the population level and get the true coefficients for inference */
@@ -58,13 +53,13 @@ NOTE: SAS initialization used:
 5          
 6          libname home "&homepath";
 NOTE: Libref HOME was successfully assigned as follows: 
-2                                                          The SAS System                             11:21 Friday, January 24, 2025
-
       Engine:        V9 
       Physical Name: /work/users/a/q/aquijano/HCHS/v3
 7          
 8          libname output "&homepath./sasdata";
 NOTE: Libref OUTPUT was successfully assigned as follows: 
+2                                                          The SAS System                             14:31 Friday, January 24, 2025
+
       Engine:        V9 
       Physical Name: /work/users/a/q/aquijano/HCHS/v3/sasdata
 9          
@@ -112,13 +107,13 @@ NOTE: Libref OUTPUT was successfully assigned as follows:
 48                informat x17 best32. ;
 49                informat x18 best32. ;
 50                informat y_bmi best32. ;
-3                                       The SAS System
-
 51                informat y_gfr best32. ;
 52                informat y_bin_gfr best32. ;
 53                format strat best12. ;
 54                format BGid best12. ;
 55                format hhid best12. ;
+3                                       The SAS System
+
 56                format subid best12. ;
 57                format v_num best12. ;
 58                format hisp_strat $4. ;
@@ -166,13 +161,13 @@ NOTE: Libref OUTPUT was successfully assigned as follows:
 100                        y_gfr
 101                        y_bin_gfr
 102            ;
-4                                       The SAS System
-
 103            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro
 103      ! variable */
 104            run;
 
 NOTE: The infile '/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv' is:
+4                                       The SAS System
+
       Filename=/work/users/b/e/beibo/v3data/population_3visits_Dec2024.csv,
       Owner Name=beibo,Group Name=its_graduate_psx,
       Access Permission=-rw-r--r--,
@@ -185,8 +180,8 @@ NOTE: 3800943 records were read from the infile
       The maximum record length was 177.
 NOTE: The data set WORK.POP_DATA has 3800943 observations and 14 variables.
 NOTE: DATA statement used (Total process time):
-      real time           7.82 seconds
-      cpu time            6.91 seconds
+      real time           11.12 seconds
+      cpu time            8.32 seconds
       
 
 3800943 rows created in WORK.POP_DATA from 
@@ -197,8 +192,8 @@ NOTE: DATA statement used (Total process time):
 NOTE: WORK.POP_DATA data set was successfully created.
 NOTE: The data set WORK.POP_DATA has 3800943 observations and 14 variables.
 NOTE: PROCEDURE IMPORT used (Total process time):
-      real time           8.56 seconds
-      cpu time            7.26 seconds
+      real time           11.81 seconds
+      cpu time            8.65 seconds
       
 
 105        
@@ -211,8 +206,8 @@ NOTE: PROCEDURE IMPORT used (Total process time):
 NOTE: There were 3800943 observations read from the data set WORK.POP_DATA.
 NOTE: The data set WORK.POP has 3800943 observations and 16 variables.
 NOTE: DATA statement used (Total process time):
-      real time           2.28 seconds
-      cpu time            1.15 seconds
+      real time           2.68 seconds
+      cpu time            1.11 seconds
       
 
 111        
@@ -220,13 +215,13 @@ NOTE: DATA statement used (Total process time):
 113                proc genmod data=pop;
 114                        class subid;
 115                        model y_gfr=x17 x12 x18 y_bmi age_strat_new x6/ dist=normal;
-5                                       The SAS System
-
 116                        repeated subject=subid / corr=&type.;
 117                        %if &m.=_miss %then %do;
 118                                where miss_ind&mt.=0;
 119                        %end;
 120                        ods output GEEEmpPEst=output.betas_pop_genmod_&type.&m.&mt.;
+5                                       The SAS System
+
 121                run;
 122        %mend pop;
 123        
@@ -247,8 +242,8 @@ NOTE: Algorithm converged.
 NOTE: The data set OUTPUT.BETAS_POP_GENMOD_IND has 7 observations and 7 variables.
 NOTE: The PROCEDURE GENMOD printed pages 1-2.
 NOTE: PROCEDURE GENMOD used (Total process time):
-      real time           31.57 seconds
-      cpu time            29.53 seconds
+      real time           39.02 seconds
+      cpu time            36.39 seconds
       
 
 128        title '[PROC GENMOD]Exchangeable correlation structure';
@@ -265,8 +260,8 @@ NOTE: Algorithm converged.
 NOTE: The data set OUTPUT.BETAS_POP_GENMOD_EXCH has 7 observations and 7 variables.
 NOTE: The PROCEDURE GENMOD printed pages 3-4.
 NOTE: PROCEDURE GENMOD used (Total process time):
-      real time           34.90 seconds
-      cpu time            33.37 seconds
+      real time           39.45 seconds
+      cpu time            37.78 seconds
       
 
 130        title;
@@ -274,9 +269,7 @@ NOTE: PROCEDURE GENMOD used (Total process time):
 ERROR: Errors printed on page 1.
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
-6                                       The SAS System
-
 NOTE: The SAS System used:
-      real time           1:17.89
-      cpu time            1:11.48
+      real time           1:33.82
+      cpu time            1:24.30
       
