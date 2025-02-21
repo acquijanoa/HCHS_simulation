@@ -1,4 +1,4 @@
-1                                                          The SAS System                            00:48 Friday, February 21, 2025
+1                                                          The SAS System                            07:01 Friday, February 21, 2025
 
 NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
 NOTE: SAS (r) Proprietary Software 9.4 (TS1M4) 
@@ -26,8 +26,8 @@ NOTE: Additional host information:
  W32_10PRO WIN 10.0.22621  Workstation
 
 NOTE: SAS initialization used:
-      real time           0.19 seconds
-      cpu time            0.09 seconds
+      real time           0.13 seconds
+      cpu time            0.10 seconds
       
 1          %include "J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\scripts\_init.sas";
 NOTE: Libref SAMPLE was successfully assigned as follows: 
@@ -43,17 +43,15 @@ WARNING: The Base SAS Software product with which PRINTTO is associated will be 
 12         			 print= "&homepath./lst/regress_sudaan_&sysdate..lst" new; run;
 
 NOTE: PROCEDURE PRINTTO used (Total process time):
-98                               The SAS System  00:48 Friday, February 21, 2025
-
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-90         
-91         
+94         
+95         
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           40.45 seconds
-      cpu time            7.59 seconds
+      real time           2:04.39
+      cpu time            16.37 seconds
       
