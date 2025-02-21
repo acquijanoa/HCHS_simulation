@@ -1,0 +1,963 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+14         *****************************************************************************************
+2                                          The SAS System          19:23 Thursday, February 20, 2025
+
+14       ! ****************
+15         
+16                 PROGRAM NAME: import_sample_data.sas
+17         
+18                 PROGRAMMER: AQA
+19         
+20                 DESCRIPTION:  Convert the csv files in sas files
+21         
+22                 VERSION CONTROL:
+23         						- 20FEB25: Initialize the code 	
+24         
+25         *****************************************************************************************
+25       ! ****************;
+26         
+27         * Macro that import 1 to n csv files and convert them in sas dataset;
+28         %macro process_files(n);
+29           %do i = 1 %to &n;
+30             /* Define paths and names dynamically */
+31             %let csv_file = &homepath./v3data/sample/samplemiss_&i..csv;
+32             %let out_table = sample.samplemiss_&i;
+33         	proc import
+34         		datafile="&csv_file"
+35                 out=&out_table.
+36                 dbms=csv
+37                 replace;
+38                 getnames=yes;
+39                 guessingrows=100;
+40             run;
+41           %end;
+42         %mend;
+43         
+44         /* Execute the macro */
+45         %process_files(5);
+
+46          /**********************************************************************
+47          *   PRODUCT:   SAS
+48          *   VERSION:   9.4
+49          *   CREATOR:   External File Interface
+50          *   DATE:      20FEB25
+51          *   DESC:      Generated SAS Datastep Code
+52          *   TEMPLATE SOURCE:  (None Specified.)
+53          ***********************************************************************/
+54             data SAMPLE.SAMPLEMISS_1    ;
+55             %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+56             infile
+56       ! 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_1.csv'
+56       ! delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+57                informat strat best32. ;
+58                informat BGid best32. ;
+59                informat hhid best32. ;
+60                informat subid best32. ;
+61                informat v_num best32. ;
+62                informat hisp_strat $5. ;
+63                informat age_base best32. ;
+3                                          The SAS System          19:23 Thursday, February 20, 2025
+
+64                informat age_strat $5. ;
+65                informat x0 best32. ;
+66                informat x1 best32. ;
+67                informat x2 best32. ;
+68                informat x3 best32. ;
+69                informat x4 best32. ;
+70                informat x6 best32. ;
+71                informat x8 best32. ;
+72                informat x12 best32. ;
+73                informat x13 best32. ;
+74                informat x14 best32. ;
+75                informat x15 best32. ;
+76                informat x17 best32. ;
+77                informat x18 best32. ;
+78                informat y_bmi best32. ;
+79                informat y_gfr best32. ;
+80                informat y_bin_gfr best32. ;
+81                informat W_bg best32. ;
+82                informat W_hh best32. ;
+83                informat W_sub best32. ;
+84                informat W_bghhsub best32. ;
+85                informat W_bghh best32. ;
+86                informat W_hhsub best32. ;
+87                informat bghhsub_s2 best32. ;
+88                informat sub_s1 best32. ;
+89                informat sub_s2 best32. ;
+90                informat hh_s1 best32. ;
+91                informat hh_s2 best32. ;
+92                informat hhsub_s1 best32. ;
+93                informat hhsub_s2 best32. ;
+94                informat miss_ind best32. ;
+95                informat miss_score best32. ;
+96                informat miss_ind_mar best32. ;
+97                informat miss_score_mar best32. ;
+98                informat RR $19. ;
+99                informat dat_num best32. ;
+100               format strat best12. ;
+101               format BGid best12. ;
+102               format hhid best12. ;
+103               format subid best12. ;
+104               format v_num best12. ;
+105               format hisp_strat $5. ;
+106               format age_base best12. ;
+107               format age_strat $5. ;
+108               format x0 best12. ;
+109               format x1 best12. ;
+110               format x2 best12. ;
+111               format x3 best12. ;
+112               format x4 best12. ;
+113               format x6 best12. ;
+114               format x8 best12. ;
+115               format x12 best12. ;
+116               format x13 best12. ;
+117               format x14 best12. ;
+4                                          The SAS System          19:23 Thursday, February 20, 2025
+
+118               format x15 best12. ;
+119               format x17 best12. ;
+120               format x18 best12. ;
+121               format y_bmi best12. ;
+122               format y_gfr best12. ;
+123               format y_bin_gfr best12. ;
+124               format W_bg best12. ;
+125               format W_hh best12. ;
+126               format W_sub best12. ;
+127               format W_bghhsub best12. ;
+128               format W_bghh best12. ;
+129               format W_hhsub best12. ;
+130               format bghhsub_s2 best12. ;
+131               format sub_s1 best12. ;
+132               format sub_s2 best12. ;
+133               format hh_s1 best12. ;
+134               format hh_s2 best12. ;
+135               format hhsub_s1 best12. ;
+136               format hhsub_s2 best12. ;
+137               format miss_ind best12. ;
+138               format miss_score best12. ;
+139               format miss_ind_mar best12. ;
+140               format miss_score_mar best12. ;
+141               format RR $19. ;
+142               format dat_num best12. ;
+143            input
+144                        strat
+145                        BGid
+146                        hhid
+147                        subid
+148                        v_num
+149                        hisp_strat  $
+150                        age_base
+151                        age_strat  $
+152                        x0
+153                        x1
+154                        x2
+155                        x3
+156                        x4
+157                        x6
+158                        x8
+159                        x12
+160                        x13
+161                        x14
+162                        x15
+163                        x17
+164                        x18
+165                        y_bmi
+166                        y_gfr
+167                        y_bin_gfr
+168                        W_bg
+169                        W_hh
+170                        W_sub
+171                        W_bghhsub
+5                                          The SAS System          19:23 Thursday, February 20, 2025
+
+172                        W_bghh
+173                        W_hhsub
+174                        bghhsub_s2
+175                        sub_s1
+176                        sub_s2
+177                        hh_s1
+178                        hh_s2
+179                        hhsub_s1
+180                        hhsub_s2
+181                        miss_ind
+182                        miss_score
+183                        miss_ind_mar
+184                        miss_score_mar
+185                        RR  $
+186                        dat_num
+187            ;
+188            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+189            run;
+
+NOTE: The infile 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_1.csv' 
+      is:
+      Filename=J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\v3data\sample\samplemiss_1.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=8135733,
+      Last Modified=20Feb2025:17:13:32,
+      Create Time=20Feb2025:17:13:32
+
+NOTE: 20571 records were read from the infile 
+      'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_1.csv'.
+      The minimum record length was 308.
+      The maximum record length was 448.
+NOTE: The data set SAMPLE.SAMPLEMISS_1 has 20571 observations and 43 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.19 seconds
+      cpu time            0.01 seconds
+      
+
+20571 rows created in SAMPLE.SAMPLEMISS_1 from 
+J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_1.csv.
+  
+  
+  
+NOTE: SAMPLE.SAMPLEMISS_1 data set was successfully created.
+NOTE: The data set SAMPLE.SAMPLEMISS_1 has 20571 observations and 43 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.37 seconds
+      cpu time            0.11 seconds
+      
+
+
+190         /**********************************************************************
+191         *   PRODUCT:   SAS
+192         *   VERSION:   9.4
+193         *   CREATOR:   External File Interface
+194         *   DATE:      20FEB25
+6                                          The SAS System          19:23 Thursday, February 20, 2025
+
+195         *   DESC:      Generated SAS Datastep Code
+196         *   TEMPLATE SOURCE:  (None Specified.)
+197         ***********************************************************************/
+198            data SAMPLE.SAMPLEMISS_2    ;
+199            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+200            infile
+200      ! 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_2.csv'
+200      ! delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+201               informat strat best32. ;
+202               informat BGid best32. ;
+203               informat hhid best32. ;
+204               informat subid best32. ;
+205               informat v_num best32. ;
+206               informat hisp_strat $4. ;
+207               informat age_base best32. ;
+208               informat age_strat $5. ;
+209               informat x0 best32. ;
+210               informat x1 best32. ;
+211               informat x2 best32. ;
+212               informat x3 best32. ;
+213               informat x4 best32. ;
+214               informat x6 best32. ;
+215               informat x8 best32. ;
+216               informat x12 best32. ;
+217               informat x13 best32. ;
+218               informat x14 best32. ;
+219               informat x15 best32. ;
+220               informat x17 best32. ;
+221               informat x18 best32. ;
+222               informat y_bmi best32. ;
+223               informat y_gfr best32. ;
+224               informat y_bin_gfr best32. ;
+225               informat W_bg best32. ;
+226               informat W_hh best32. ;
+227               informat W_sub best32. ;
+228               informat W_bghhsub best32. ;
+229               informat W_bghh best32. ;
+230               informat W_hhsub best32. ;
+231               informat bghhsub_s2 best32. ;
+232               informat sub_s1 best32. ;
+233               informat sub_s2 best32. ;
+234               informat hh_s1 best32. ;
+235               informat hh_s2 best32. ;
+236               informat hhsub_s1 best32. ;
+237               informat hhsub_s2 best32. ;
+238               informat miss_ind best32. ;
+239               informat miss_score best32. ;
+240               informat miss_ind_mar best32. ;
+241               informat miss_score_mar best32. ;
+242               informat RR $19. ;
+243               informat dat_num best32. ;
+244               format strat best12. ;
+245               format BGid best12. ;
+246               format hhid best12. ;
+7                                          The SAS System          19:23 Thursday, February 20, 2025
+
+247               format subid best12. ;
+248               format v_num best12. ;
+249               format hisp_strat $4. ;
+250               format age_base best12. ;
+251               format age_strat $5. ;
+252               format x0 best12. ;
+253               format x1 best12. ;
+254               format x2 best12. ;
+255               format x3 best12. ;
+256               format x4 best12. ;
+257               format x6 best12. ;
+258               format x8 best12. ;
+259               format x12 best12. ;
+260               format x13 best12. ;
+261               format x14 best12. ;
+262               format x15 best12. ;
+263               format x17 best12. ;
+264               format x18 best12. ;
+265               format y_bmi best12. ;
+266               format y_gfr best12. ;
+267               format y_bin_gfr best12. ;
+268               format W_bg best12. ;
+269               format W_hh best12. ;
+270               format W_sub best12. ;
+271               format W_bghhsub best12. ;
+272               format W_bghh best12. ;
+273               format W_hhsub best12. ;
+274               format bghhsub_s2 best12. ;
+275               format sub_s1 best12. ;
+276               format sub_s2 best12. ;
+277               format hh_s1 best12. ;
+278               format hh_s2 best12. ;
+279               format hhsub_s1 best12. ;
+280               format hhsub_s2 best12. ;
+281               format miss_ind best12. ;
+282               format miss_score best12. ;
+283               format miss_ind_mar best12. ;
+284               format miss_score_mar best12. ;
+285               format RR $19. ;
+286               format dat_num best12. ;
+287            input
+288                        strat
+289                        BGid
+290                        hhid
+291                        subid
+292                        v_num
+293                        hisp_strat  $
+294                        age_base
+295                        age_strat  $
+296                        x0
+297                        x1
+298                        x2
+299                        x3
+300                        x4
+8                                          The SAS System          19:23 Thursday, February 20, 2025
+
+301                        x6
+302                        x8
+303                        x12
+304                        x13
+305                        x14
+306                        x15
+307                        x17
+308                        x18
+309                        y_bmi
+310                        y_gfr
+311                        y_bin_gfr
+312                        W_bg
+313                        W_hh
+314                        W_sub
+315                        W_bghhsub
+316                        W_bghh
+317                        W_hhsub
+318                        bghhsub_s2
+319                        sub_s1
+320                        sub_s2
+321                        hh_s1
+322                        hh_s2
+323                        hhsub_s1
+324                        hhsub_s2
+325                        miss_ind
+326                        miss_score
+327                        miss_ind_mar
+328                        miss_score_mar
+329                        RR  $
+330                        dat_num
+331            ;
+332            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+333            run;
+
+NOTE: The infile 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_2.csv' 
+      is:
+      Filename=J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\v3data\sample\samplemiss_2.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=8513630,
+      Last Modified=20Feb2025:17:13:33,
+      Create Time=20Feb2025:17:13:33
+
+NOTE: 21510 records were read from the infile 
+      'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_2.csv'.
+      The minimum record length was 310.
+      The maximum record length was 447.
+NOTE: The data set SAMPLE.SAMPLEMISS_2 has 21510 observations and 43 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.19 seconds
+      cpu time            0.04 seconds
+      
+
+21510 rows created in SAMPLE.SAMPLEMISS_2 from 
+J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_2.csv.
+  
+9                                          The SAS System          19:23 Thursday, February 20, 2025
+
+  
+  
+NOTE: SAMPLE.SAMPLEMISS_2 data set was successfully created.
+NOTE: The data set SAMPLE.SAMPLEMISS_2 has 21510 observations and 43 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.35 seconds
+      cpu time            0.12 seconds
+      
+
+
+334         /**********************************************************************
+335         *   PRODUCT:   SAS
+336         *   VERSION:   9.4
+337         *   CREATOR:   External File Interface
+338         *   DATE:      20FEB25
+339         *   DESC:      Generated SAS Datastep Code
+340         *   TEMPLATE SOURCE:  (None Specified.)
+341         ***********************************************************************/
+342            data SAMPLE.SAMPLEMISS_3    ;
+343            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+344            infile
+344      ! 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_3.csv'
+344      ! delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+345               informat strat best32. ;
+346               informat BGid best32. ;
+347               informat hhid best32. ;
+348               informat subid best32. ;
+349               informat v_num best32. ;
+350               informat hisp_strat $4. ;
+351               informat age_base best32. ;
+352               informat age_strat $5. ;
+353               informat x0 best32. ;
+354               informat x1 best32. ;
+355               informat x2 best32. ;
+356               informat x3 best32. ;
+357               informat x4 best32. ;
+358               informat x6 best32. ;
+359               informat x8 best32. ;
+360               informat x12 best32. ;
+361               informat x13 best32. ;
+362               informat x14 best32. ;
+363               informat x15 best32. ;
+364               informat x17 best32. ;
+365               informat x18 best32. ;
+366               informat y_bmi best32. ;
+367               informat y_gfr best32. ;
+368               informat y_bin_gfr best32. ;
+369               informat W_bg best32. ;
+370               informat W_hh best32. ;
+371               informat W_sub best32. ;
+372               informat W_bghhsub best32. ;
+373               informat W_bghh best32. ;
+374               informat W_hhsub best32. ;
+375               informat bghhsub_s2 best32. ;
+10                                         The SAS System          19:23 Thursday, February 20, 2025
+
+376               informat sub_s1 best32. ;
+377               informat sub_s2 best32. ;
+378               informat hh_s1 best32. ;
+379               informat hh_s2 best32. ;
+380               informat hhsub_s1 best32. ;
+381               informat hhsub_s2 best32. ;
+382               informat miss_ind best32. ;
+383               informat miss_score best32. ;
+384               informat miss_ind_mar best32. ;
+385               informat miss_score_mar best32. ;
+386               informat RR $19. ;
+387               informat dat_num best32. ;
+388               format strat best12. ;
+389               format BGid best12. ;
+390               format hhid best12. ;
+391               format subid best12. ;
+392               format v_num best12. ;
+393               format hisp_strat $4. ;
+394               format age_base best12. ;
+395               format age_strat $5. ;
+396               format x0 best12. ;
+397               format x1 best12. ;
+398               format x2 best12. ;
+399               format x3 best12. ;
+400               format x4 best12. ;
+401               format x6 best12. ;
+402               format x8 best12. ;
+403               format x12 best12. ;
+404               format x13 best12. ;
+405               format x14 best12. ;
+406               format x15 best12. ;
+407               format x17 best12. ;
+408               format x18 best12. ;
+409               format y_bmi best12. ;
+410               format y_gfr best12. ;
+411               format y_bin_gfr best12. ;
+412               format W_bg best12. ;
+413               format W_hh best12. ;
+414               format W_sub best12. ;
+415               format W_bghhsub best12. ;
+416               format W_bghh best12. ;
+417               format W_hhsub best12. ;
+418               format bghhsub_s2 best12. ;
+419               format sub_s1 best12. ;
+420               format sub_s2 best12. ;
+421               format hh_s1 best12. ;
+422               format hh_s2 best12. ;
+423               format hhsub_s1 best12. ;
+424               format hhsub_s2 best12. ;
+425               format miss_ind best12. ;
+426               format miss_score best12. ;
+427               format miss_ind_mar best12. ;
+428               format miss_score_mar best12. ;
+429               format RR $19. ;
+11                                         The SAS System          19:23 Thursday, February 20, 2025
+
+430               format dat_num best12. ;
+431            input
+432                        strat
+433                        BGid
+434                        hhid
+435                        subid
+436                        v_num
+437                        hisp_strat  $
+438                        age_base
+439                        age_strat  $
+440                        x0
+441                        x1
+442                        x2
+443                        x3
+444                        x4
+445                        x6
+446                        x8
+447                        x12
+448                        x13
+449                        x14
+450                        x15
+451                        x17
+452                        x18
+453                        y_bmi
+454                        y_gfr
+455                        y_bin_gfr
+456                        W_bg
+457                        W_hh
+458                        W_sub
+459                        W_bghhsub
+460                        W_bghh
+461                        W_hhsub
+462                        bghhsub_s2
+463                        sub_s1
+464                        sub_s2
+465                        hh_s1
+466                        hh_s2
+467                        hhsub_s1
+468                        hhsub_s2
+469                        miss_ind
+470                        miss_score
+471                        miss_ind_mar
+472                        miss_score_mar
+473                        RR  $
+474                        dat_num
+475            ;
+476            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+477            run;
+
+NOTE: The infile 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_3.csv' 
+      is:
+      Filename=J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\v3data\sample\samplemiss_3.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=8496606,
+      Last Modified=20Feb2025:17:13:33,
+12                                         The SAS System          19:23 Thursday, February 20, 2025
+
+      Create Time=20Feb2025:17:13:32
+
+NOTE: 21441 records were read from the infile 
+      'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_3.csv'.
+      The minimum record length was 304.
+      The maximum record length was 448.
+NOTE: The data set SAMPLE.SAMPLEMISS_3 has 21441 observations and 43 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.24 seconds
+      cpu time            0.00 seconds
+      
+
+21441 rows created in SAMPLE.SAMPLEMISS_3 from 
+J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_3.csv.
+  
+  
+  
+NOTE: SAMPLE.SAMPLEMISS_3 data set was successfully created.
+NOTE: The data set SAMPLE.SAMPLEMISS_3 has 21441 observations and 43 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.40 seconds
+      cpu time            0.09 seconds
+      
+
+
+478         /**********************************************************************
+479         *   PRODUCT:   SAS
+480         *   VERSION:   9.4
+481         *   CREATOR:   External File Interface
+482         *   DATE:      20FEB25
+483         *   DESC:      Generated SAS Datastep Code
+484         *   TEMPLATE SOURCE:  (None Specified.)
+485         ***********************************************************************/
+486            data SAMPLE.SAMPLEMISS_4    ;
+487            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+488            infile
+488      ! 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_4.csv'
+488      ! delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+489               informat strat best32. ;
+490               informat BGid best32. ;
+491               informat hhid best32. ;
+492               informat subid best32. ;
+493               informat v_num best32. ;
+494               informat hisp_strat $4. ;
+495               informat age_base best32. ;
+496               informat age_strat $5. ;
+497               informat x0 best32. ;
+498               informat x1 best32. ;
+499               informat x2 best32. ;
+500               informat x3 best32. ;
+501               informat x4 best32. ;
+502               informat x6 best32. ;
+503               informat x8 best32. ;
+504               informat x12 best32. ;
+13                                         The SAS System          19:23 Thursday, February 20, 2025
+
+505               informat x13 best32. ;
+506               informat x14 best32. ;
+507               informat x15 best32. ;
+508               informat x17 best32. ;
+509               informat x18 best32. ;
+510               informat y_bmi best32. ;
+511               informat y_gfr best32. ;
+512               informat y_bin_gfr best32. ;
+513               informat W_bg best32. ;
+514               informat W_hh best32. ;
+515               informat W_sub best32. ;
+516               informat W_bghhsub best32. ;
+517               informat W_bghh best32. ;
+518               informat W_hhsub best32. ;
+519               informat bghhsub_s2 best32. ;
+520               informat sub_s1 best32. ;
+521               informat sub_s2 best32. ;
+522               informat hh_s1 best32. ;
+523               informat hh_s2 best32. ;
+524               informat hhsub_s1 best32. ;
+525               informat hhsub_s2 best32. ;
+526               informat miss_ind best32. ;
+527               informat miss_score best32. ;
+528               informat miss_ind_mar best32. ;
+529               informat miss_score_mar best32. ;
+530               informat RR $19. ;
+531               informat dat_num best32. ;
+532               format strat best12. ;
+533               format BGid best12. ;
+534               format hhid best12. ;
+535               format subid best12. ;
+536               format v_num best12. ;
+537               format hisp_strat $4. ;
+538               format age_base best12. ;
+539               format age_strat $5. ;
+540               format x0 best12. ;
+541               format x1 best12. ;
+542               format x2 best12. ;
+543               format x3 best12. ;
+544               format x4 best12. ;
+545               format x6 best12. ;
+546               format x8 best12. ;
+547               format x12 best12. ;
+548               format x13 best12. ;
+549               format x14 best12. ;
+550               format x15 best12. ;
+551               format x17 best12. ;
+552               format x18 best12. ;
+553               format y_bmi best12. ;
+554               format y_gfr best12. ;
+555               format y_bin_gfr best12. ;
+556               format W_bg best12. ;
+557               format W_hh best12. ;
+558               format W_sub best12. ;
+14                                         The SAS System          19:23 Thursday, February 20, 2025
+
+559               format W_bghhsub best12. ;
+560               format W_bghh best12. ;
+561               format W_hhsub best12. ;
+562               format bghhsub_s2 best12. ;
+563               format sub_s1 best12. ;
+564               format sub_s2 best12. ;
+565               format hh_s1 best12. ;
+566               format hh_s2 best12. ;
+567               format hhsub_s1 best12. ;
+568               format hhsub_s2 best12. ;
+569               format miss_ind best12. ;
+570               format miss_score best12. ;
+571               format miss_ind_mar best12. ;
+572               format miss_score_mar best12. ;
+573               format RR $19. ;
+574               format dat_num best12. ;
+575            input
+576                        strat
+577                        BGid
+578                        hhid
+579                        subid
+580                        v_num
+581                        hisp_strat  $
+582                        age_base
+583                        age_strat  $
+584                        x0
+585                        x1
+586                        x2
+587                        x3
+588                        x4
+589                        x6
+590                        x8
+591                        x12
+592                        x13
+593                        x14
+594                        x15
+595                        x17
+596                        x18
+597                        y_bmi
+598                        y_gfr
+599                        y_bin_gfr
+600                        W_bg
+601                        W_hh
+602                        W_sub
+603                        W_bghhsub
+604                        W_bghh
+605                        W_hhsub
+606                        bghhsub_s2
+607                        sub_s1
+608                        sub_s2
+609                        hh_s1
+610                        hh_s2
+611                        hhsub_s1
+612                        hhsub_s2
+15                                         The SAS System          19:23 Thursday, February 20, 2025
+
+613                        miss_ind
+614                        miss_score
+615                        miss_ind_mar
+616                        miss_score_mar
+617                        RR  $
+618                        dat_num
+619            ;
+620            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+621            run;
+
+NOTE: The infile 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_4.csv' 
+      is:
+      Filename=J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\v3data\sample\samplemiss_4.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=8322201,
+      Last Modified=20Feb2025:17:13:32,
+      Create Time=20Feb2025:17:13:32
+
+NOTE: 21000 records were read from the infile 
+      'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_4.csv'.
+      The minimum record length was 313.
+      The maximum record length was 448.
+NOTE: The data set SAMPLE.SAMPLEMISS_4 has 21000 observations and 43 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.19 seconds
+      cpu time            0.01 seconds
+      
+
+21000 rows created in SAMPLE.SAMPLEMISS_4 from 
+J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_4.csv.
+  
+  
+  
+NOTE: SAMPLE.SAMPLEMISS_4 data set was successfully created.
+NOTE: The data set SAMPLE.SAMPLEMISS_4 has 21000 observations and 43 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.36 seconds
+      cpu time            0.04 seconds
+      
+
+
+622         /**********************************************************************
+623         *   PRODUCT:   SAS
+624         *   VERSION:   9.4
+625         *   CREATOR:   External File Interface
+626         *   DATE:      20FEB25
+627         *   DESC:      Generated SAS Datastep Code
+628         *   TEMPLATE SOURCE:  (None Specified.)
+629         ***********************************************************************/
+630            data SAMPLE.SAMPLEMISS_5    ;
+631            %let _EFIERR_ = 0; /* set the ERROR detection macro variable */
+632            infile
+632      ! 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_5.csv'
+632      ! delimiter = ',' MISSOVER DSD lrecl=32767 firstobs=2 ;
+633               informat strat best32. ;
+16                                         The SAS System          19:23 Thursday, February 20, 2025
+
+634               informat BGid best32. ;
+635               informat hhid best32. ;
+636               informat subid best32. ;
+637               informat v_num best32. ;
+638               informat hisp_strat $4. ;
+639               informat age_base best32. ;
+640               informat age_strat $5. ;
+641               informat x0 best32. ;
+642               informat x1 best32. ;
+643               informat x2 best32. ;
+644               informat x3 best32. ;
+645               informat x4 best32. ;
+646               informat x6 best32. ;
+647               informat x8 best32. ;
+648               informat x12 best32. ;
+649               informat x13 best32. ;
+650               informat x14 best32. ;
+651               informat x15 best32. ;
+652               informat x17 best32. ;
+653               informat x18 best32. ;
+654               informat y_bmi best32. ;
+655               informat y_gfr best32. ;
+656               informat y_bin_gfr best32. ;
+657               informat W_bg best32. ;
+658               informat W_hh best32. ;
+659               informat W_sub best32. ;
+660               informat W_bghhsub best32. ;
+661               informat W_bghh best32. ;
+662               informat W_hhsub best32. ;
+663               informat bghhsub_s2 best32. ;
+664               informat sub_s1 best32. ;
+665               informat sub_s2 best32. ;
+666               informat hh_s1 best32. ;
+667               informat hh_s2 best32. ;
+668               informat hhsub_s1 best32. ;
+669               informat hhsub_s2 best32. ;
+670               informat miss_ind best32. ;
+671               informat miss_score best32. ;
+672               informat miss_ind_mar best32. ;
+673               informat miss_score_mar best32. ;
+674               informat RR $19. ;
+675               informat dat_num best32. ;
+676               format strat best12. ;
+677               format BGid best12. ;
+678               format hhid best12. ;
+679               format subid best12. ;
+680               format v_num best12. ;
+681               format hisp_strat $4. ;
+682               format age_base best12. ;
+683               format age_strat $5. ;
+684               format x0 best12. ;
+685               format x1 best12. ;
+686               format x2 best12. ;
+687               format x3 best12. ;
+17                                         The SAS System          19:23 Thursday, February 20, 2025
+
+688               format x4 best12. ;
+689               format x6 best12. ;
+690               format x8 best12. ;
+691               format x12 best12. ;
+692               format x13 best12. ;
+693               format x14 best12. ;
+694               format x15 best12. ;
+695               format x17 best12. ;
+696               format x18 best12. ;
+697               format y_bmi best12. ;
+698               format y_gfr best12. ;
+699               format y_bin_gfr best12. ;
+700               format W_bg best12. ;
+701               format W_hh best12. ;
+702               format W_sub best12. ;
+703               format W_bghhsub best12. ;
+704               format W_bghh best12. ;
+705               format W_hhsub best12. ;
+706               format bghhsub_s2 best12. ;
+707               format sub_s1 best12. ;
+708               format sub_s2 best12. ;
+709               format hh_s1 best12. ;
+710               format hh_s2 best12. ;
+711               format hhsub_s1 best12. ;
+712               format hhsub_s2 best12. ;
+713               format miss_ind best12. ;
+714               format miss_score best12. ;
+715               format miss_ind_mar best12. ;
+716               format miss_score_mar best12. ;
+717               format RR $19. ;
+718               format dat_num best12. ;
+719            input
+720                        strat
+721                        BGid
+722                        hhid
+723                        subid
+724                        v_num
+725                        hisp_strat  $
+726                        age_base
+727                        age_strat  $
+728                        x0
+729                        x1
+730                        x2
+731                        x3
+732                        x4
+733                        x6
+734                        x8
+735                        x12
+736                        x13
+737                        x14
+738                        x15
+739                        x17
+740                        x18
+741                        y_bmi
+18                                         The SAS System          19:23 Thursday, February 20, 2025
+
+742                        y_gfr
+743                        y_bin_gfr
+744                        W_bg
+745                        W_hh
+746                        W_sub
+747                        W_bghhsub
+748                        W_bghh
+749                        W_hhsub
+750                        bghhsub_s2
+751                        sub_s1
+752                        sub_s2
+753                        hh_s1
+754                        hh_s2
+755                        hhsub_s1
+756                        hhsub_s2
+757                        miss_ind
+758                        miss_score
+759                        miss_ind_mar
+760                        miss_score_mar
+761                        RR  $
+762                        dat_num
+763            ;
+764            if _ERROR_ then call symputx('_EFIERR_',1);  /* set ERROR detection macro variable */
+765            run;
+
+NOTE: The infile 'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_5.csv' 
+      is:
+      Filename=J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\v3data\sample\samplemiss_5.csv,
+      RECFM=V,LRECL=32767,File Size (bytes)=8144293,
+      Last Modified=20Feb2025:17:13:33,
+      Create Time=20Feb2025:17:13:33
+
+NOTE: 20565 records were read from the infile 
+      'J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_5.csv'.
+      The minimum record length was 301.
+      The maximum record length was 448.
+NOTE: The data set SAMPLE.SAMPLEMISS_5 has 20565 observations and 43 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.18 seconds
+      cpu time            0.00 seconds
+      
+
+20565 rows created in SAMPLE.SAMPLEMISS_5 from 
+J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3data/sample/samplemiss_5.csv.
+  
+  
+  
+NOTE: SAMPLE.SAMPLEMISS_5 data set was successfully created.
+NOTE: The data set SAMPLE.SAMPLEMISS_5 has 20565 observations and 43 variables.
+NOTE: PROCEDURE IMPORT used (Total process time):
+      real time           0.36 seconds
+      cpu time            0.09 seconds
+      
+
+19                                         The SAS System          19:23 Thursday, February 20, 2025
+
+766        
+767        proc printto; run;
+
