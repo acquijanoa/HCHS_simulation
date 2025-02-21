@@ -1,19 +1,19 @@
-1                                                          The SAS System                            00:49 Friday, February 21, 2025
+1                                                          The SAS System                            07:26 Friday, February 21, 2025
 
-NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
-NOTE: SAS (r) Proprietary Software 9.4 (TS1M4) 
+NOTE: Copyright (c) 2023 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M8) 
       Licensed to UNIVERSITY OF NORTH CAROLINA CHAPEL HILL - SFA T&R, Site 70022629.
-NOTE: This session is executing on the W32_10PRO  platform.
+NOTE: This session is executing on the W32_WIN+PRO  platform.
 
 
 
-NOTE: Updated analytical products:
+NOTE: Analytical products:
       
-      SAS/STAT 14.2
-      SAS/ETS 14.2
-      SAS/OR 14.2
-      SAS/IML 14.2
-      SAS/QC 14.2
+      SAS/STAT 15.3
+      SAS/ETS 15.3
+      SAS/OR 15.3
+      SAS/IML 15.3
+      SAS/QC 15.3
 
 WARNING: Your system is scheduled to expire on April 1, 2025, which is 39 days from now. The SAS System will no longer function on 
          or after that date. Please contact your SAS Installation Representative to obtain your updated SAS Installation Data (SID) 
@@ -23,11 +23,11 @@ To locate the name of your SAS Installation Representative go to http://support.
 operating system Windows.
 NOTE: Additional host information:
 
- W32_10PRO WIN 10.0.22621  Workstation
+ W32_WIN+PRO WIN 10.0.22631  Workstation
 
 NOTE: SAS initialization used:
-      real time           0.15 seconds
-      cpu time            0.12 seconds
+      real time           17.35 seconds
+      cpu time            0.04 seconds
       
 1          %include "J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\scripts\_init.sas";
 NOTE: Libref SAMPLE was successfully assigned as follows: 
@@ -47,13 +47,11 @@ NOTE: PROCEDURE PRINTTO used (Total process time):
       cpu time            0.00 seconds
       
 
-90         
-91         
-6                                                          The SAS System                            00:49 Friday, February 21, 2025
-
+93         
+94         
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           1.65 seconds
-      cpu time            0.18 seconds
+      real time           29.03 seconds
+      cpu time            0.12 seconds
       
