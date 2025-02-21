@@ -29,6 +29,22 @@ proc printto log = "&homepath./logs/import_sample_data_&sysdate..log"
         getnames=yes;
         guessingrows=100;
     run;
+
+	* Derive new variables ;
+	data sample.samplemiss_&i; 
+	 	set sample.samplemiss_&i; 
+
+		age_strat_new = 1*(age_base >= 45);
+		if strat in (1,5) then strat_recoded = 1;
+		else if strat in (2,6) then strat_recoded = 2;
+		else if strat in (3,7) then strat_recoded = 3;
+		else if strat in (4,8) then strat_recoded = 4;
+
+		bghhsub_s2_nr = bghhsub_s2/RR;
+	run;
+
+	* sort by strat_recoded;
+	 proc sort data = sample.samplemiss_&i; by strat_recoded; run;
   %end;
 %mend;
 
