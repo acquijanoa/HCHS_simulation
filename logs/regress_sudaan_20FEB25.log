@@ -1,0 +1,133 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.00 seconds
+      
+
+726  ***************************************************************************
+726! ******************************
+727  
+728          PROGRAM NAME: regress_sudaan.sas
+729  
+730          PROGRAMMER: AQA
+731  
+732          DESCRIPTION:
+733  
+734          VERSION CONTROL:
+735                          - 20FEB25: Initialize the code
+736  
+737  ***************************************************************************
+737! ******************************;
+738  
+739  * Run sudaan models for the 100 files;
+740  %macro regress_sudaan(n=, corr=exchangeable);
+741    %do i = 1 %to &n;
+742  
+743      * excluding v3 with no missing values;
+744      proc sql;
+745          create table temp_&i. as
+746          select *
+747          from sample.samplemiss_&i.
+748          where subid in (select subid
+749                          from sample.samplemiss_&i.
+750                          where v_num = 3 and miss_ind_mar = 0);
+751          create table samplemiss_&i._ as
+752          select *
+753          from sample.samplemiss_&i.
+754          where subid in (select subid
+755                          from temp_&i.
+756                          where miss_ind_mar = 0);
+757      quit;
+758  
+759      * order data;
+760      proc sort data = samplemiss_&i._;
+761          by strat_recoded bgid hhid subid;
+762      run;
+763  
+764      * Fit regress model from sudaan using &corr matrix;
+765      options pagesize=60 linesize=80;
+766      proc regress data = samplemiss_&i._ filetype=sas r=&corr semethod=zeger
+766! ;
+767          nest strat_recoded bgid hhid;
+768          weight bghhsub_s2_nr;
+769          model y_gfr = x17 x12 x18 y_bmi age_strat_new x6;
+770          output beta sebeta p_beta / filename=betas_&corr._&i._ filetype=sas
+770!  replace;
+771      run;
+772  
+773      * Append parameter names to sudaan output;
+774      data v3_outpt.betas_&corr._&i;
+775          merge betas_&corr._&i._(rename=(BETA=Estimate SEBETA=Stderr
+775! P_BETA=ProbZ)) parms;
+776          by modelrhs;
+777          length parm $ 20;
+778          drop procnum modelno modelrhs;
+779      run;
+780  
+781    %end;
+782  %mend regress_sudaan;
+783  
+784  * Create dataset with parms labels;
+785  data parms;
+786      length Parm $ 15;
+787      input modelrhs parm $;
+788      datalines;
+
+NOTE: The data set WORK.PARMS has 7 observations and 2 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+796  ;
+797  run;
+798  
+799  /* Execute the macro */
+800  %regress_sudaan(n=1);
+NOTE: Table WORK.TEMP_1 created, with 14061 rows and 46 columns.
+
+NOTE: Table WORK.SAMPLEMISS_1_ created, with 14061 rows and 46 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.12 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 14061 observations read from the data set WORK.SAMPLEMISS_1_.
+NOTE: The data set WORK.SAMPLEMISS_1_ has 14061 observations and 46 variables.
+NOTE: PROCEDURE SORT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+      
+
+ERROR: Procedure REGRESS not found.
+
+NOTE: The SAS System stopped processing this step because of errors.
+NOTE: PROCEDURE REGRESS used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+ERROR: File WORK.BETAS_EXCHANGEABLE_1_.DATA does not exist.
+WARNING: Length of character variable Parm has already been set. 
+         Use the LENGTH statement as the very first statement in the DATA STEP 
+         to declare the length of a character variable.
+
+WARNING: The variable procnum in the DROP, KEEP, or RENAME list has never been 
+         referenced.
+WARNING: The variable modelno in the DROP, KEEP, or RENAME list has never been 
+         referenced.
+NOTE: The SAS System stopped processing this step because of errors.
+WARNING: The data set V3_OUTPT.BETAS_EXCHANGEABLE_1 may be incomplete.  When 
+         this step was stopped there were 0 observations and 1 variables.
+WARNING: Data set V3_OUTPT.BETAS_EXCHANGEABLE_1 was not replaced because this 
+         step was stopped.
+NOTE: DATA statement used (Total process time):
+      real time           0.27 seconds
+      cpu time            0.00 seconds
+      
+
+801  
+802  proc printto; run;
+

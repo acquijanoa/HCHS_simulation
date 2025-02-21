@@ -1,0 +1,249 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+13         *********************************************************************************************************
+14         
+15                 PROGRAM NAME: combine_sudaan_pop.sas
+16         
+17                 PROGRAMMER: AQA
+18         
+19                 DESCRIPTION:
+20         
+21                 VERSION CONTROL:
+22         						- 20FEB25: Initialize the code 	
+23         
+2                                                          The SAS System                            00:49 Friday, February 21, 2025
+
+24         *********************************************************************************************************;
+25         
+26         * Set macro variables;
+27         %let corr = exchangeable;
+28         
+29         * merge files containing beta estimates using sample data;
+30         data merge_betas;
+31         	set v3_outpt.betas_&corr._1 - v3_outpt.betas_&corr._100;
+32         run;
+
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_1.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_2.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_3.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_4.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_5.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_6.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_7.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_8.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_9.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_10.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_11.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_12.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_13.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_14.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_15.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_16.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_17.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_18.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_19.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_20.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_21.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_22.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_23.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_24.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_25.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_26.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_27.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_28.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_29.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_30.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_31.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_32.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_33.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_34.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_35.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_36.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_37.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_38.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_39.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_40.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_41.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_42.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_43.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_44.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_45.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_46.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_47.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_48.
+3                                                          The SAS System                            00:49 Friday, February 21, 2025
+
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_49.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_50.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_51.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_52.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_53.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_54.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_55.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_56.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_57.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_58.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_59.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_60.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_61.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_62.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_63.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_64.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_65.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_66.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_67.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_68.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_69.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_70.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_71.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_72.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_73.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_74.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_75.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_76.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_77.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_78.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_79.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_80.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_81.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_82.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_83.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_84.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_85.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_86.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_87.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_88.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_89.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_90.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_91.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_92.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_93.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_94.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_95.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_96.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_97.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_98.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_99.
+NOTE: There were 7 observations read from the data set V3_OUTPT.BETAS_EXCHANGEABLE_100.
+NOTE: The data set WORK.MERGE_BETAS has 700 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.22 seconds
+      cpu time            0.03 seconds
+      
+
+4                                                          The SAS System                            00:49 Friday, February 21, 2025
+
+33         
+34         * append the true value coming from population estimates;
+35         proc sql;
+36              create table betas_samp_pop as
+37                select a.*, b.estimate as true
+38         	   from
+39                merge_betas as a
+40                right join
+41                v3_outpt.betas_pop_genmod_exch as b
+42         	   on a.parm=b.parm;
+NOTE: Data file V3_OUTPT.BETAS_POP_GENMOD_EXCH.DATA is in a format that is native to another host, or the file encoding does not 
+      match the session encoding. Cross Environment Data Access will be used, which might require additional CPU resources and 
+      might reduce performance.
+NOTE: Table WORK.BETAS_SAMP_POP created, with 700 rows and 6 columns.
+
+43         quit;
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+44         
+45         * Compute 95% confidence intervals;
+46         data betas_samp_pop;
+47         	set betas_samp_pop;
+48         	uppercl = Estimate + 1.986 * Stderr;
+49         	lowercl = Estimate - 1.986 * Stderr;
+50         run;
+
+NOTE: There were 700 observations read from the data set WORK.BETAS_SAMP_POP.
+NOTE: The data set WORK.BETAS_SAMP_POP has 700 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+51         
+52         * Estimate quantities of interest: bias, ...;
+53         data betas_samp_pop_;
+54                         set betas_samp_pop;
+55                         /*calculate statistics to summarize*/
+56                         inci=(uppercl>=true & lowercl<=true);
+57                         bias=estimate-true;
+58                         relbias=bias/true;
+59                         /*PROBT*/
+60                         rejecth0=(abs(t)>quantile('NORMAL',.975));
+61         run;
+
+NOTE: There were 700 observations read from the data set WORK.BETAS_SAMP_POP.
+NOTE: The data set WORK.BETAS_SAMP_POP_ has 700 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+62         
+63         proc means data=betas_samp_pop_
+64                         noprint nway;
+5                                                          The SAS System                            00:49 Friday, February 21, 2025
+
+65                         class parm;
+66                         var true estimate bias relbias stderr inci rejecth0;
+67                         output out=output_1 mean(true estimate bias relbias stderr inci
+68                                 rejecth0)=true estimate empbias relbias estse coverage
+69                                 prejecth0 std(estimate)=empse;
+70         run;
+
+NOTE: There were 700 observations read from the data set WORK.BETAS_SAMP_POP_.
+NOTE: The data set WORK.OUTPUT_1 has 7 observations and 11 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+71         
+72         
+73         data output;
+74               set output_1;
+75               relse=estse/empse-1;
+76         run;
+
+NOTE: There were 7 observations read from the data set WORK.OUTPUT_1.
+NOTE: The data set WORK.OUTPUT has 7 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+77         
+78         ods rtf file="&homepath./v3/output/combine_sudaan_exchangeable.rtf" style=journal bodytitle;
+NOTE: Writing RTF Body file: J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/v3/output/combine_sudaan_exchangeable.rtf
+79                 proc print data=output noobs label;
+80         		var parm true estimate empbias relbias empse estse relse coverage prejecth0;
+81                 label parm='Effect' true='True Value' estimate='Estimate'
+82                                 empbias='Empirical Bias' relbias='Relative Bias'
+83                                 empse='Empirical SE' estse='Estimated SE'
+84                                 coverage='Coverage' prejecth0='P(reject H0)'
+85                                 relse='Relative SE difference';
+86         run;
+
+NOTE: There were 7 observations read from the data set WORK.OUTPUT.
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+87         ods rtf close;
+88         
+89         proc printto; run;
+

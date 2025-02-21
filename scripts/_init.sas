@@ -4,4 +4,5 @@
 
 * Set library names;
 libname sample "&homepath./v3data/sample";
+libname v3_outpt "&homepath./v3/sasdata";
 

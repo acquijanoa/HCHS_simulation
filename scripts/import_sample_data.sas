@@ -49,6 +49,6 @@ proc printto log = "&homepath./logs/import_sample_data_&sysdate..log"
 %mend;
 
 /* Execute the macro */
-%process_files(5);
+%process_files(100);
 
 proc printto; run;
