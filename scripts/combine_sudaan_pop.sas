@@ -16,10 +16,10 @@ proc printto log = "&homepath./logs/combine_sudaan_pop_&sysdate..log"
 *********************************************************************************************************;
 
 
-%macro combine_betas(n=100, corr=exchangeable);
+%macro combine_betas(start=1, end=200, corr=exchangeable);
 * merge files containing beta estimates using sample data;
 data merge_betas;
-	set v3_outpt.betas_&corr._1 - v3_outpt.betas_&corr._&n.;
+	set dt_betas.betas_&corr._&start. - dt_betas.betas_&corr._&end.;
 run;
 
 * append the true value coming from population estimates; 
@@ -29,7 +29,7 @@ proc sql;
 	   from
        merge_betas as a
        right join 
-       v3_outpt.betas_pop_genmod_&corr. as b 
+       dt_betas.betas_pop_&corr. as b 
 	   on a.parm=b.parm;
 quit;
 
@@ -48,7 +48,7 @@ data betas_samp_pop_;
                 bias=estimate-true;
                 relbias=bias/true;
                 /*PROBT*/
-                rejecth0=(abs(t)>quantile('NORMAL',.975));
+                rejecth0=(abs(t)>quantile('NORMAL',.986));
 run;
 
 proc means data=betas_samp_pop_
@@ -66,7 +66,7 @@ data output;
       relse=estse/empse-1;
 run;
 
-ods rtf file="&homepath./v3/output/combine_sudaan_&corr..rtf" style=journal bodytitle;
+ods rtf file="&homepath./output/reports/combine_sudaan_&corr._&sysdate..rtf" style=journal bodytitle;
         proc print data=output noobs label;
 		var parm true estimate empbias relbias empse estse relse coverage prejecth0;
         label parm='Effect' true='True Value' estimate='Estimate'
@@ -78,7 +78,7 @@ run;
 ods rtf close;
 %mend combine_betas;
 
-%combine_betas;
+%combine_betas(corr=exchangeable);
 %combine_betas(corr=independent);
 
 proc printto; run;

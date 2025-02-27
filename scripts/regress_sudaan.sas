@@ -43,14 +43,19 @@ proc printto log = "&homepath./logs/regress_sudaan_&sysdate..log"
 	* Fit regress model from sudaan using &corr matrix;  
 	options pagesize=60 linesize=80;
 	proc regress data = samplemiss_&i._ filetype=sas r=&corr semethod=zeger;
-		nest strat_recoded bgid hhid / psulev=2;
+		%if &corr. = exchangeable %then %do; 
+			nest strat_recoded bgid hhid / psulev=2 ;
+		%end;
+		%else %do;
+			nest strat_recoded bgid hhid;
+		%end;
 		weight bghhsub_s2_nr;
 		model y_gfr = x17 x12 x18 y_bmi age_strat_new x6;
 		output beta sebeta p_beta t_beta / filename=betas_&corr._&i._ filetype=sas replace;
 	run;
 	
 	* Append parameter names to sudaan output; 
-	data v3_outpt.betas_&corr._&i;
+	data dt_betas.betas_&corr._&i;
 		merge betas_&corr._&i._(rename=(BETA=Estimate SEBETA=Stderr P_BETA=ProbZ t_beta=t)) parms;  
 		by modelrhs;
 		length parm $ 20;
@@ -76,10 +81,10 @@ data parms;
 run;
 
 /* Execute the macro for exchangeable correlation matrix */
-%regress_sudaan(n=100);
+%regress_sudaan(n=200);
 
 /* Execute the macro with independent correlation matrix */
-%regress_sudaan(n=100, corr = independent);
+%regress_sudaan(n=200, corr = independent);
 
 
 proc printto; run;

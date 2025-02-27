@@ -16,10 +16,10 @@ proc printto log = "&homepath./logs/import_sample_data_&sysdate..log"
 *********************************************************************************************************;
 
 * Macro that import 1 to n csv files and convert them in sas dataset;
-%macro process_files(n);
-  %do i = 1 %to &n;
+%macro process_files(start=1, end=);
+  %do i = &start. %to &end.;
     /* Define paths and names dynamically */
-    %let csv_file = &homepath./v3data/sample/samplemiss_&i..csv; 
+    %let csv_file = &homepath./data/raw/sample/samplemiss_&i..csv; 
     %let out_table = sample.samplemiss_&i; 
 	proc import
 		datafile="&csv_file"
@@ -49,6 +49,6 @@ proc printto log = "&homepath./logs/import_sample_data_&sysdate..log"
 %mend;
 
 /* Execute the macro */
-%process_files(100);
+%process_files(start=101,end=200);
 
 proc printto; run;
