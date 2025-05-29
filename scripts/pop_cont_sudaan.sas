@@ -43,7 +43,7 @@ data pop;
 run;
 proc sort data = pop; by strat_recoded; run;
 
-* Macro that fit a GENMOD model with a continuous normal response;
+* Macro that fit a SUDAAN model with a continuous normal response;
 %macro pop(corr=);
 	options pagesize=60 linesize=80;
 	proc regress data = pop filetype=sas r=&corr semethod=zeger;

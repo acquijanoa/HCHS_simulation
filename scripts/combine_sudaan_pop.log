@@ -1,42 +1,30 @@
-1                                                          The SAS System                          17:08 Thursday, February 27, 2025
+1                                                          The SAS System                              18:14 Wednesday, May 14, 2025
 
-ERROR: Expecting page 1, got page -1 instead.
-ERROR: Page validation error while reading SASUSER.PROFILE.CATALOG.
-NOTE: Unable to open SASUSER.PROFILE. WORK.PROFILE will be opened instead.
-NOTE: All profile changes will be lost at the end of the session.
-NOTE: Copyright (c) 2023 by SAS Institute Inc., Cary, NC, USA. 
-NOTE: SAS (r) Proprietary Software 9.4 (TS1M8) 
+NOTE: Copyright (c) 2002-2012 by SAS Institute Inc., Cary, NC, USA. 
+NOTE: SAS (r) Proprietary Software 9.4 (TS1M4) 
       Licensed to UNIVERSITY OF NORTH CAROLINA CHAPEL HILL - SFA T&R, Site 70022629.
-NOTE: This session is executing on the W32_WIN+PRO  platform.
+NOTE: This session is executing on the W32_10PRO  platform.
 
 
 
-NOTE: Analytical products:
+NOTE: Updated analytical products:
       
-      SAS/STAT 15.3
-      SAS/ETS 15.3
-      SAS/OR 15.3
-      SAS/IML 15.3
-      SAS/QC 15.3
+      SAS/STAT 14.2
+      SAS/ETS 14.2
+      SAS/OR 14.2
+      SAS/IML 14.2
+      SAS/QC 14.2
 
-WARNING: Your system is scheduled to expire on April 1, 2025, which is 33 days from now. The SAS System will no longer function on 
-         or after that date. Please contact your SAS Installation Representative to obtain your updated SAS Installation Data (SID) 
-         file, which includes SETINIT information.
-To locate the name of your SAS Installation Representative go to http://support.sas.com/repfinder and provide your site number 
-70022629 and company name as UNIVERSITY OF NORTH CAROLINA CHAPEL HILL - SFA T&R. On the SAS REP list provided, locate the REP for 
-operating system Windows.
 NOTE: Additional host information:
 
- W32_WIN+PRO WIN 10.0.22631  Workstation
+ W32_10PRO WIN 10.0.22621  Workstation
 
 NOTE: SAS initialization used:
-      real time           0.11 seconds
-      cpu time            0.01 seconds
+      real time           0.21 seconds
+      cpu time            0.18 seconds
       
 1          %include "J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\scripts\_init.sas";
-NOTE: Libref V3DATA was successfully assigned as follows: 
-      Engine:        V9 
-      Physical Name: J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\v3data
+NOTE: Library V3DATA does not exist.
 NOTE: Libref SAMPLE was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\data\derived\sample
@@ -44,24 +32,23 @@ NOTE: Library V3_OUTPT does not exist.
 NOTE: Libref DT_BETAS was successfully assigned as follows: 
       Engine:        V9 
       Physical Name: J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\data\processed\betas
-14         
-15         proc printto log = "&homepath./logs/combine_sudaan_pop_&sysdate..log"
-WARNING: The Base SAS Software product with which PRINTTO is associated will be expiring soon, and is currently in warning mode to 
-         indicate this upcoming expiration. Please run PROC SETINIT to obtain more information on your warning period.
-16         			 print= "&homepath./lst/combine_sudaan_pop_&sysdate..lst" new; run;
+NOTE: Libref BETAS_B was successfully assigned as follows: 
+      Engine:        V9 
+      Physical Name: J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\data\processed\betas\bin
+15         
+16         proc printto log = "&homepath./logs/combine_sudaan_pop_&sysdate..log"
+17         			 print= "&homepath./lst/combine_sudaan_pop_&sysdate..lst" new; run;
 
 NOTE: PROCEDURE PRINTTO used (Total process time):
       real time           0.00 seconds
       cpu time            0.00 seconds
       
 
-97         
 98         
-
-ERROR: Errors printed on page 1.
+99         
 
 NOTE: SAS Institute Inc., SAS Campus Drive, Cary, NC USA 27513-2414
 NOTE: The SAS System used:
-      real time           2.06 seconds
-      cpu time            0.06 seconds
+      real time           21.39 seconds
+      cpu time            0.59 seconds
       

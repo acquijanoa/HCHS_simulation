@@ -16,23 +16,25 @@ proc printto log = "&homepath./logs/regress_sudaan_&sysdate..log"
 *********************************************************************************************************;
 
 * Run sudaan models for the 100 files;
-%macro regress_sudaan(n=, corr=exchangeable);
-  %do i = 1 %to &n;
+%macro regress_sudaan(start = 1, end=, corr=exchangeable);
+  %do i = &start %to &end;
 	
-	* excluding v3 with no missing values; 	
+	* use the full data; 	
  	proc sql;
 		create table temp_&i. as
 		select *
 		from sample.samplemiss_&i.
 		where subid in (select subid 
 						from sample.samplemiss_&i. 
-						where v_num = 3 and miss_ind_mar = 0);
+					/*	where v_num = 3 and miss_ind_mar = 0 */
+						);
 		create table samplemiss_&i._ as
 		select *
 		from sample.samplemiss_&i.
 		where subid in (select subid 
 						from temp_&i.
-						where miss_ind_mar = 0);
+					/*	where miss_ind_mar = 0 */
+					);
 	quit;
 
 	* order data;
@@ -41,15 +43,16 @@ proc printto log = "&homepath./logs/regress_sudaan_&sysdate..log"
 	run;  	
 
 	* Fit regress model from sudaan using &corr matrix;  
+		* In a simulation group meeting i as requested to use hhid insted of bgid;
 	options pagesize=60 linesize=80;
 	proc regress data = samplemiss_&i._ filetype=sas r=&corr semethod=zeger;
 		%if &corr. = exchangeable %then %do; 
-			nest strat_recoded bgid hhid / psulev=2 ;
+			nest strat_recoded hhid / psulev=2 ;
 		%end;
 		%else %do;
-			nest strat_recoded bgid hhid;
+			nest strat_recoded hhid;
 		%end;
-		weight bghhsub_s2_nr;
+		weight bghhsub_s2; *bghhsub_s2_nr;
 		model y_gfr = x17 x12 x18 y_bmi age_strat_new x6;
 		output beta sebeta p_beta t_beta / filename=betas_&corr._&i._ filetype=sas replace;
 	run;
@@ -81,10 +84,10 @@ data parms;
 run;
 
 /* Execute the macro for exchangeable correlation matrix */
-%regress_sudaan(n=200);
+*%regress_sudaan(end=100);
 
 /* Execute the macro with independent correlation matrix */
-%regress_sudaan(n=200, corr = independent);
+%regress_sudaan(start = 101, end = 500, corr = independent);
 
 
 proc printto; run;

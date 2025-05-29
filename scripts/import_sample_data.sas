@@ -1,5 +1,4 @@
 %include "J:\HCHS\STATISTICS\GRAS\QAngarita\HCHS_simulation\scripts\_init.sas";
-
 proc printto log = "&homepath./logs/import_sample_data_&sysdate..log"
 			 print= "&homepath./lst/import_sample_data_&sysdate..lst" new; run; 
 *********************************************************************************************************
@@ -49,6 +48,6 @@ proc printto log = "&homepath./logs/import_sample_data_&sysdate..log"
 %mend;
 
 /* Execute the macro */
-%process_files(start=101,end=200);
+%process_files(start=101,end=500);
 
 proc printto; run;

@@ -16,7 +16,7 @@ proc printto log = "&homepath./logs/combine_sudaan_pop_&sysdate..log"
 *********************************************************************************************************;
 
 
-%macro combine_betas(start=1, end=200, corr=exchangeable);
+%macro combine_betas(start=1, end=100, corr=exchangeable);
 * merge files containing beta estimates using sample data;
 data merge_betas;
 	set dt_betas.betas_&corr._&start. - dt_betas.betas_&corr._&end.;
@@ -78,8 +78,8 @@ run;
 ods rtf close;
 %mend combine_betas;
 
-%combine_betas(corr=exchangeable);
-%combine_betas(corr=independent);
+*%combine_betas(corr=exchangeable);
+%combine_betas(end = 500, corr=independent);
 
 proc printto; run;
 

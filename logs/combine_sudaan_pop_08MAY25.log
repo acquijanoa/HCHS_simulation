@@ -1,0 +1,411 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.00 seconds
+      
+
+18         *********************************************************************************************************
+19         
+20                 PROGRAM NAME: combine_sudaan_pop.sas
+21         
+22                 PROGRAMMER: AQA
+23         
+24                 DESCRIPTION:
+25         
+26                 VERSION CONTROL:
+27         						- 20FEB25: Initialize the code 	
+28         
+29         *********************************************************************************************************;
+30         
+31         
+2                                                          The SAS System                                16:25 Thursday, May 8, 2025
+
+32         %macro combine_betas(start=1, end=100, corr=exchangeable);
+33         * merge files containing beta estimates using sample data;
+34         data merge_betas;
+35         	set dt_betas.betas_&corr._&start. - dt_betas.betas_&corr._&end.;
+36         run;
+37         
+38         * append the true value coming from population estimates;
+39         proc sql;
+40              create table betas_samp_pop as
+41                select a.*, b.estimate as true
+42         	   from
+43                merge_betas as a
+44                right join
+45                dt_betas.betas_pop_&corr. as b
+46         	   on a.parm=b.parm;
+47         quit;
+48         
+49         * Compute 95% confidence intervals;
+50         data betas_samp_pop;
+51         	set betas_samp_pop;
+52         	uppercl = Estimate + 1.986 * Stderr;
+53         	lowercl = Estimate - 1.986 * Stderr;
+54         run;
+55         
+56         * Estimate quantities of interest: bias, ...;
+57         data betas_samp_pop_;
+58                         set betas_samp_pop;
+59                         /*calculate statistics to summarize*/
+60                         inci=(uppercl>=true & lowercl<=true);
+61                         bias=estimate-true;
+62                         relbias=bias/true;
+63                         /*PROBT*/
+64                         rejecth0=(abs(t)>quantile('NORMAL',.986));
+65         run;
+66         
+67         proc means data=betas_samp_pop_
+68                         noprint nway;
+69                         class parm;
+70                         var true estimate bias relbias stderr inci rejecth0;
+71                         output out=output_1 mean(true estimate bias relbias stderr inci
+72                                 rejecth0)=true estimate empbias relbias estse coverage
+73                                 prejecth0 std(estimate)=empse;
+74         run;
+75         
+76         
+77         data output;
+78               set output_1;
+79               relse=estse/empse-1;
+80         run;
+81         
+82         ods rtf file="&homepath./output/reports/combine_sudaan_&corr._&sysdate..rtf" style=journal bodytitle;
+83                 proc print data=output noobs label;
+84         		var parm true estimate empbias relbias empse estse relse coverage prejecth0;
+85                 label parm='Effect' true='True Value' estimate='Estimate'
+86                                 empbias='Empirical Bias' relbias='Relative Bias'
+87                                 empse='Empirical SE' estse='Estimated SE'
+88                                 coverage='Coverage' prejecth0='P(reject H0)'
+89                                 relse='Relative SE difference';
+3                                                          The SAS System                                16:25 Thursday, May 8, 2025
+
+90         run;
+91         ods rtf close;
+92         %mend combine_betas;
+93         
+94         %combine_betas(corr=exchangeable);
+
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_1.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_2.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_3.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_4.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_5.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_6.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_7.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_8.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_9.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_10.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_11.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_12.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_13.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_14.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_15.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_16.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_17.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_18.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_19.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_20.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_21.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_22.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_23.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_24.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_25.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_26.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_27.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_28.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_29.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_30.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_31.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_32.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_33.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_34.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_35.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_36.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_37.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_38.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_39.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_40.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_41.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_42.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_43.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_44.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_45.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_46.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_47.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_48.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_49.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_50.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_51.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_52.
+4                                                          The SAS System                                16:25 Thursday, May 8, 2025
+
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_53.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_54.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_55.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_56.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_57.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_58.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_59.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_60.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_61.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_62.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_63.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_64.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_65.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_66.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_67.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_68.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_69.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_70.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_71.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_72.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_73.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_74.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_75.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_76.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_77.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_78.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_79.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_80.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_81.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_82.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_83.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_84.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_85.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_86.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_87.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_88.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_89.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_90.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_91.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_92.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_93.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_94.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_95.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_96.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_97.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_98.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_99.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_EXCHANGEABLE_100.
+NOTE: The data set WORK.MERGE_BETAS has 700 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.48 seconds
+      cpu time            0.03 seconds
+      
+
+NOTE: Table WORK.BETAS_SAMP_POP created, with 700 rows and 6 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.30 seconds
+5                                                          The SAS System                                16:25 Thursday, May 8, 2025
+
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 700 observations read from the data set WORK.BETAS_SAMP_POP.
+NOTE: The data set WORK.BETAS_SAMP_POP has 700 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 700 observations read from the data set WORK.BETAS_SAMP_POP.
+NOTE: The data set WORK.BETAS_SAMP_POP_ has 700 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.21 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 700 observations read from the data set WORK.BETAS_SAMP_POP_.
+NOTE: The data set WORK.OUTPUT_1 has 7 observations and 11 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.11 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 7 observations read from the data set WORK.OUTPUT_1.
+NOTE: The data set WORK.OUTPUT has 7 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.03 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Writing RTF Body file: 
+      J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/output/reports/combine_sudaan_exchangeable_08MAY25.rtf
+
+NOTE: There were 7 observations read from the data set WORK.OUTPUT.
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.10 seconds
+      cpu time            0.03 seconds
+      
+
+95         %combine_betas(corr=independent);
+
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_1.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_2.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_3.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_4.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_5.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_6.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_7.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_8.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_9.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_10.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_11.
+6                                                          The SAS System                                16:25 Thursday, May 8, 2025
+
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_12.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_13.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_14.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_15.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_16.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_17.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_18.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_19.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_20.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_21.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_22.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_23.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_24.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_25.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_26.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_27.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_28.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_29.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_30.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_31.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_32.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_33.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_34.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_35.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_36.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_37.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_38.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_39.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_40.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_41.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_42.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_43.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_44.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_45.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_46.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_47.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_48.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_49.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_50.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_51.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_52.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_53.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_54.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_55.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_56.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_57.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_58.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_59.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_60.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_61.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_62.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_63.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_64.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_65.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_66.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_67.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_68.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_69.
+7                                                          The SAS System                                16:25 Thursday, May 8, 2025
+
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_70.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_71.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_72.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_73.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_74.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_75.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_76.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_77.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_78.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_79.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_80.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_81.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_82.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_83.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_84.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_85.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_86.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_87.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_88.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_89.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_90.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_91.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_92.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_93.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_94.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_95.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_96.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_97.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_98.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_99.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_INDEPENDENT_100.
+NOTE: The data set WORK.MERGE_BETAS has 700 observations and 5 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.46 seconds
+      cpu time            0.01 seconds
+      
+
+NOTE: Table WORK.BETAS_SAMP_POP created, with 700 rows and 6 columns.
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 700 observations read from the data set WORK.BETAS_SAMP_POP.
+NOTE: The data set WORK.BETAS_SAMP_POP has 700 observations and 8 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 700 observations read from the data set WORK.BETAS_SAMP_POP.
+NOTE: The data set WORK.BETAS_SAMP_POP_ has 700 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+8                                                          The SAS System                                16:25 Thursday, May 8, 2025
+
+      
+
+
+NOTE: There were 700 observations read from the data set WORK.BETAS_SAMP_POP_.
+NOTE: The data set WORK.OUTPUT_1 has 7 observations and 11 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 7 observations read from the data set WORK.OUTPUT_1.
+NOTE: The data set WORK.OUTPUT has 7 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.00 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Writing RTF Body file: J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/output/reports/combine_sudaan_independent_08MAY25.rtf
+
+NOTE: There were 7 observations read from the data set WORK.OUTPUT.
+NOTE: The PROCEDURE PRINT printed page 2.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.02 seconds
+      cpu time            0.01 seconds
+      
+
+96         
+97         proc printto; run;
+

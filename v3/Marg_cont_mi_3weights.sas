@@ -96,11 +96,11 @@ ods select none;
                         set samp&sid.;
 
                         /* log weight */
-                        logwt=log(&wt.);
+                        logwt=log(bghhsub_s2);
 
 
                         /* weight adjusted for non-response */
-                        bghhsub_s2_nr = &wt./RR;
+                        bghhsub_s2_nr = bghhsub_s2/RR;
 
 
                         /* combine strata */
@@ -110,8 +110,8 @@ ods select none;
                         age_strat_new = 1*(age_base>=45);
                         hisp_strat_new=1*(hisp_strat='TRUE');
                         hisp_age = hisp_strat_new * age_strat_new;
-                        age_wt = age_strat_new* &wt.;
-                        his_wt = hisp_strat_new* &wt.;
+                        age_wt = age_strat_new* bghhsub_s2;
+                        his_wt = hisp_strat_new* bghhsub_s2;
 
                         if strat_c4 = 1 then do;
                                 age_str_1 = age_strat_new;
@@ -126,7 +126,7 @@ ods select none;
                                 strat_1 = 1;
                                 strat_2 = 0;
                                 strat_3 = 0;
-                                strat_wt_1 = &wt.;
+                                strat_wt_1 = bghhsub_s2;
                                 strat_wt_2 = 0;
                                 strat_wt_3 = 0;
                         end;
@@ -143,7 +143,7 @@ ods select none;
                                 strat_2 = 1;
                                 strat_1 = 0;
                                 strat_3 = 0;
-                                strat_wt_2 = &wt.;
+                                strat_wt_2 = bghhsub_s2;
                                 strat_wt_1 = 0;
                                 strat_wt_3 = 0;
                         end;
@@ -160,7 +160,7 @@ ods select none;
                                 strat_3 = 1;
                                 strat_2 = 0;
                                 strat_1 = 0;
-                                strat_wt_3 = &wt.;
+                                strat_wt_3 = bghhsub_s2;
                                 strat_wt_2 = 0;
                                 strat_wt_1 = 0;
                         end;
@@ -182,31 +182,20 @@ ods select none;
                                 strat_wt_1 = 0;
                         end;
 
-
-                        WHERE miss_ind&mt. = 0;
+                        WHERE miss_ind_mar = 0;
                 run;
-
 
 
                 /* Transform from long to wide */
                 /* This step is the preparation step for multiple imputation */
-                data samp_1(rename=(x6=x6_1 y_bmi=y_bmi_1 y_gfr = y_gfr_1 bghhsub_s2_nr=w_nr_1));
-                SET SAMP;
-                WHERE V_NUM = 1;
+				data samp_1 samp_2 samp_3;
+				    set SAMP;
+				    if V_NUM = 1 then output SAMP_1(rename=(x6=x6_1 y_bmi=y_bmi_1 y_gfr=y_gfr_1 bghhsub_s2_nr=w_nr_1));
+				    else if V_NUM = 2 then output SAMP_2(rename=(x6=x6_2 y_bmi=y_bmi_2 y_gfr=y_gfr_2 bghhsub_s2_nr=w_nr_2));        
+				    else if V_NUM = 3 then output SAMP_3(rename=(x6=x6_3 y_bmi=y_bmi_3 y_gfr=y_gfr_3 bghhsub_s2_nr=w_nr_3));
+				run;
 
-                RUN;
-
-                DATA SAMP_2(rename=(x6=x6_2 y_bmi=y_bmi_2 y_gfr = y_gfr_2 bghhsub_s2_nr=w_nr_2));
-                SET SAMP;
-                WHERE V_NUM = 2 ;
-                RUN;
-
-                DATA SAMP_3(rename=(x6=x6_3 y_bmi=y_bmi_3 y_gfr = y_gfr_3 bghhsub_s2_nr=w_nr_3));
-                SET SAMP;
-                WHERE V_NUM = 3;
-                RUN;
-
-                DATA SAMP_WIDE;
+                data samp_wide;
                         MERGE SAMP_1-SAMP_3;
                         BY SUBID;
 
@@ -217,16 +206,14 @@ ods select none;
                         else v3miss=0;
 
                         age_x17 = age_strat_new * x17;
-                        inverse_weight = 1/&wt.;
+                        inverse_weight = 1/bghhsub_s2;
 
-                        logw = log(&wt.);
+                        logw = log(bghhsub_s2);
+                run;
 
-
-                RUN;
-
-                PROC SORT DATA = SAMP_WIDE;
-                BY SUBID;
-                RUN;
+                proc sort data = SAMP_WIDE;
+                	by subid;
+                run;
 
                 proc means data = SAMP_WIDE;
                         var bghhsub_s2;
@@ -250,13 +237,11 @@ ods select none;
                 PROC MEANS DATA = SAMP_WIDE n nmiss;
                                 Var  x17 x12 x18 y_bmi_1-y_bmi_3 age_strat_new
                                 x6_2-x6_3 y_gfr_1-y_gfr_3
-                                &mivar.
+                                x14 x12 w_nr_1 w_nr_2 w_nr_3
                                 ;
 
                 output out= mi_miss nmiss=;
                 run;
-
-
 
                 PROC TRANSPOSE DATA = MI_MISS(DROP=_TYPE_ _FREQ_) OUT=MI_LONG;
                 RUN;
@@ -275,14 +260,14 @@ ods select none;
                 /* Then we fit MI */
 
                 proc mi data=SAMP_WIDE seed=2021 nimpute=5 out=SAMP_COMPLETE;
-                        %if %sysfunc(find(&mivar., weight_cat)) ge 1 %then %do;
+                        %if %sysfunc(find(x14 x12 w_nr_1 w_nr_2 w_nr_3, weight_cat)) ge 1 %then %do;
                             class weight_cat;
                         %end;
-                        %else %if %sysfunc(find(&mivar., bghhsub_s2)) ge 1 %then %do;
+                        %else %if %sysfunc(find(x14 x12 w_nr_1 w_nr_2 w_nr_3, bghhsub_s2)) ge 1 %then %do;
                             class bghzhsub_s2;
                         %end;
                         fcs reg(x6_2-x6_3 y_gfr_2-y_gfr_3 y_bmi_2-y_bmi_3);
-                        var /*%if &m. = _MI %then %do; strat_c4 %end;*/ &var.;
+                        var &var.;
 
                 run;
 
@@ -316,8 +301,8 @@ ods select none;
                 proc genmod data=samp_long;
                         by _IMPUTATION_;
                         class &clst. /*v_num*/;
-                        weight &wt.;
-                        model y_gfr = &rowvar. / dist=normal;
+                        weight bghhsub_s2;
+                        model y_gfr = x17 x12 x18 y_bmi age_strat_new x6 / dist=normal;
                         *repeated subject=&clst. / corr=&type. withinsubject=v_num;
                         repeated subject=&clst. /corr=&type.;
                         ods output GEEEmpPEst=betas_weighted_5;
@@ -327,7 +312,7 @@ ods select none;
 
                 /* combine the fitted GEE results for 5 sets of imputation */
                 proc mianalyze parms=betas_weighted_5;
-                        modeleffects intercept &rowvar.;
+                        modeleffects intercept x17 x12 x18 y_bmi age_strat_new x6;
                         ods output
                         ParameterEstimates = BETAS_WEIGHTED;
                 run;
@@ -339,14 +324,14 @@ ods select none;
 
 
                 %IF %sysfunc(MOD(&SID, 10)) = 1 %THEN %DO;
-                        DATA output.betas&mivar_n._&clst._&type.&M.&mt._&k.;
+                        DATA output.betas&mivar_n._&clst._&type._3wts_mar_&k.;
                                 SET BETAS_WEIGHTED;
                         RUN;
                 %END;
                 %else %do;
 
-                        DATA output.betas&mivar_n._&clst._&type.&M.&mt._&k.;
-                                SET output.betas&mivar_n._&clst._&type.&m.&mt._&k. BETAS_WEIGHTED;
+                        DATA output.betas&mivar_n._&clst._&type._3wts_mar_&k.;
+                                SET output.betas&mivar_n._&clst._&type._3wts_mar_&k. BETAS_WEIGHTED;
                         RUN;
                 %end;
 
@@ -358,21 +343,6 @@ ods select none;
 
 %let mt=_mar;
 
-/* %let mt = ; */
-
-/*
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_3wts,
-        mt=&mt.,
-        mivar=v2miss x14 x12 age_base strat_1 strat_2 strat_3 w_nr_1 w_nr_2 w_nr_3,
-        mivar_n=p);
-
-*/
 
 %itrt(start=&start.,
         stop=&stop.,
@@ -381,284 +351,6 @@ ods select none;
         clst=hhid,
         wt=bghhsub_s2,
         m=_3wts,
-        mt=&mt.,
+        mt=_mar,
         mivar=x14 x12 w_nr_1 w_nr_2 w_nr_3,
         mivar_n=p);
-
-/*
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 y_bmi age_strat_new x6,
-        type=ind,
-        clst=subid,
-        wt=bghhsub_s2,
-        m=_3wts,
-        mt=&mt.,
-        mivar=v2miss x14 x12 age_base strat_1 strat_2 strat_3 w_nr_1 w_nr_2 w_nr_3,
-        mivar_n=p);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_3wts,
-        mt=&mt.,
-        mivar=v2miss x14 x12 age_base strat_1 strat_2 strat_3 hisp_strat_new w_nr_1 w_nr_2 w_nr_3,
-        mivar_n=o);
-
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 y_bmi age_strat_new x6,
-        type=ind,
-        clst=hhid,
-        wt=bghhsub_s2,
-        m=_3wts,
-        mt=&mt.,
-        mivar=v2miss x14 x12 age_base  strat_1 strat_2 strat_3 hisp_strat_new w_nr_1 w_nr_2 w_nr_3,
-        mivar_n=o);
-
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 y_bmi age_strat_new x6,
-        type=ind,
-        clst=subid,
-        wt=bghhsub_s2,
-        m=_3wts,
-        mt=&mt.,
-        mivar=v2miss x14 x12 age_base  strat_1 strat_2 strat_3 hisp_strat_new w_nr_1 w_nr_2 w_nr_3,
-        mivar_n=o);
-
-
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_3wts,
-        mt=&mt.,
-        mivar=w_nr_1 w_nr_2 w_nr_3,
-        mivar_n=u);
-
-
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 y_bmi age_strat_new x6,
-        type=ind,
-        clst=hhid,
-        wt=bghhsub_s2,
-        m=_3wts,
-        mt=&mt.,
-        mivar=w_nr_1 w_nr_2 w_nr_3,
-        mivar_n=u);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 y_bmi age_strat_new x6,
-        type=ind,
-        clst=subid,
-        wt=bghhsub_s2,
-        m=_3wts,
-        mt=&mt.,
-        mivar=w_nr_1 w_nr_2 w_nr_3,
-        mivar_n=u);
-*/
-/*
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=subid,
-        wt=bghhsub_s2,
-        m=_wtcat,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base bghhsub_s2);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=subid,
-        wt=bghhsub_s2,
-        m=_qtwt,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base weight_cat);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=hhid,
-        wt=bghhsub_s2,
-        m=_wtcat,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base bghhsub_s2);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=hhid,
-        wt=bghhsub_s2,
-        m=_qtwt,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base weight_cat);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_wtcat,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base bghhsub_s2);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_qtwt,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base weight_cat);
-*/
-
-
-/*
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_histage,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base hisp_strat_new hisp_age strat_1-strat_3);
-
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_all,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base hisp_strat_new hisp_age strat_1-strat_3 age_his_str_1-age_his_str_3 his_str_1-his_str_3 age_str_1-age_str_3);
-
-
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_main,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base hisp_strat_new strat_1-strat_3);
-
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_int,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base hisp_strat_new strat_1-strat_3 bghhsub_s2 strat_wt_1-strat_wt_3 age_wt his_wt);
-
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_wtoly,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base bghhsub_s2);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_wtint,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base bghhsub_s2 strat_wt_1-strat_wt_3 age_wt his_wt);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_wtmain,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base bghhsub_s2 hisp_strat_new strat_1-strat_3);
-*/
-
-/*
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=hhid,
-        wt=bghhsub_s2,
-        m=_MI,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base hisp_strat_new);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=subid,
-        wt=bghhsub_s2,
-        m=_MI,
-        mt=&mt.,
-        mivar=v2miss x1 x2 age_base hisp_strat_new age_x17);
-
-*/
-/*
-%let mt = ;
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=bgid,
-        wt=bghhsub_s2,
-        m=_MI,
-        mt=&mt.);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=hhid,
-        wt=bghhsub_s2,
-        m=_MI,
-        mt=&mt.);
-
-%itrt(start=&start.,
-        stop=&stop.,
-        rowvar=x17 x12 x18 x14 y_bmi age_strat_new x6,
-        type=ind,
-        clst=subid,
-        wt=bghhsub_s2,
-        m=_MI,
-        mt=&mt.);
-
-*/
