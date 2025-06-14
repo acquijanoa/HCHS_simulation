@@ -1,0 +1,206 @@
+NOTE: PROCEDURE PRINTTO used (Total process time):
+      real time           1.78 seconds
+      cpu time            0.03 seconds
+      
+
+18         *********************************************************************************************************
+19         
+20                 PROGRAM NAME: combine_mi_sudaan_pop.sas
+21         
+22                 PROGRAMMER: AQA
+23         
+24                 DESCRIPTION:
+25         
+26                 VERSION CONTROL:
+27         						- 24APR25: Initialize the code 	
+28         
+29         *********************************************************************************************************;
+30         
+31         
+2                                                          The SAS System                                16:54 Friday, June 13, 2025
+
+32         %macro combine_mi_betas(start=1, end=100, corr=exchangeable, rr=glm);
+33         * merge files containing beta estimates using sample data;
+34         data merge_betas;
+35         	set dt_betas.betas_mi_&corr._&rr._&start. - dt_betas.betas_mi_&corr._&rr._&end.;
+36         
+37         	if parm = 'intercept' then parm = 'Intercept';
+38         run;
+39         
+40         * append the true value coming from population estimates;
+41         proc sql;
+42              create table betas_samp_pop as
+43                select a.*, b.estimate as true
+44         	   from
+45                merge_betas as a
+46                right join
+47                dt_betas.betas_pop_&corr. as b
+48         	   on a.parm=b.parm;
+49         quit;
+50         
+51         * Compute 95% confidence intervals;
+52         data betas_samp_pop;
+53         	set betas_samp_pop;
+54         	uppercl = Estimate + 1.975 * Stderr;
+55         	lowercl = Estimate - 1.975 * Stderr;
+56         run;
+57         
+58         * Estimate quantities of interest: bias, ...;
+59         data betas_samp_pop_;
+60                         set betas_samp_pop;
+61                         /*calculate statistics to summarize*/
+62                         inci=(uppercl>=true & lowercl<=true);
+63                         bias=estimate-true;
+64                         relbias=bias/true;
+65                         /*PROBT*/
+66                         rejecth0=(abs(t)>quantile('NORMAL',.975));
+67         run;
+68         
+69         proc means data=betas_samp_pop_
+70                         noprint nway;
+71                         class parm;
+72                         var true estimate bias relbias stderr inci rejecth0;
+73                         output out=output_1 mean(true estimate bias relbias stderr inci
+74                                 rejecth0)=true estimate empbias relbias estse coverage
+75                                 prejecth0 std(estimate)=empse;
+76         run;
+77         
+78         
+79         data output;
+80               set output_1;
+81               relse=estse/empse-1;
+82         run;
+83         
+84         ods rtf file="&homepath./output/reports/combine_mi_sudaan_&corr._&rr._&sysdate..rtf" style=journal bodytitle;
+85                 proc print data=output noobs label;
+86         		var parm true estimate empbias relbias empse estse relse coverage prejecth0;
+87                 label parm='Effect' true='True Value' estimate='Estimate'
+88                                 empbias='Empirical Bias' relbias='Relative Bias'
+89                                 empse='Empirical SE' estse='Estimated SE'
+3                                                          The SAS System                                16:54 Friday, June 13, 2025
+
+90                                 coverage='Coverage' prejecth0='P(reject H0)'
+91                                 relse='Relative SE difference';
+92         run;
+93         ods rtf close;
+94         %mend combine_mi_betas;
+95         
+96         * glm ;
+97         	* exchangeable;
+98         %combine_mi_betas(end=40);
+
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_1.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_2.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_3.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_4.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_5.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_6.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_7.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_8.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_9.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_10.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_11.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_12.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_13.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_14.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_15.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_16.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_17.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_18.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_19.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_20.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_21.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_22.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_23.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_24.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_25.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_26.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_27.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_28.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_29.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_30.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_31.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_32.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_33.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_34.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_35.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_36.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_37.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_38.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_39.
+NOTE: There were 7 observations read from the data set DT_BETAS.BETAS_MI_EXCHANGEABLE_GLM_40.
+NOTE: The data set WORK.MERGE_BETAS has 280 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           1.13 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Table WORK.BETAS_SAMP_POP created, with 280 rows and 13 columns.
+
+4                                                          The SAS System                                16:54 Friday, June 13, 2025
+
+NOTE: PROCEDURE SQL used (Total process time):
+      real time           0.05 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 280 observations read from the data set WORK.BETAS_SAMP_POP.
+NOTE: The data set WORK.BETAS_SAMP_POP has 280 observations and 13 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: Variable t is uninitialized.
+NOTE: Missing values were generated as a result of performing an operation on missing values.
+      Each place is given by: (Number of times) at (Line):(Column).
+      280 at 98:187   
+NOTE: There were 280 observations read from the data set WORK.BETAS_SAMP_POP.
+NOTE: The data set WORK.BETAS_SAMP_POP_ has 280 observations and 18 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.00 seconds
+      
+
+
+NOTE: There were 280 observations read from the data set WORK.BETAS_SAMP_POP_.
+NOTE: The data set WORK.OUTPUT_1 has 7 observations and 11 variables.
+NOTE: PROCEDURE MEANS used (Total process time):
+      real time           0.04 seconds
+      cpu time            0.01 seconds
+      
+
+
+NOTE: There were 7 observations read from the data set WORK.OUTPUT_1.
+NOTE: The data set WORK.OUTPUT has 7 observations and 12 variables.
+NOTE: DATA statement used (Total process time):
+      real time           0.01 seconds
+      cpu time            0.00 seconds
+      
+
+NOTE: Writing RTF Body file: 
+      J:/HCHS/STATISTICS/GRAS/QAngarita/HCHS_simulation/output/reports/combine_mi_sudaan_exchangeable_glm_13JUN25.rtf
+
+NOTE: There were 7 observations read from the data set WORK.OUTPUT.
+NOTE: The PROCEDURE PRINT printed page 1.
+NOTE: PROCEDURE PRINT used (Total process time):
+      real time           0.13 seconds
+      cpu time            0.03 seconds
+      
+
+99         	* independent;
+100        *%combine_mi_betas(corr=independent);
+101        	
+102        * NRadj;
+103        	* exchangeable;
+104        *%combine_mi_betas(rr=NRadj);
+105        	* independent;
+5                                                          The SAS System                                16:54 Friday, June 13, 2025
+
+106        *%combine_mi_betas(corr=independent, rr=NRadj);
+107        
+108        
+109        proc printto; run;
+

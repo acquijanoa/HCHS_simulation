@@ -1,4 +1,0 @@
-Building DAG of jobs...
-MissingInputException in line 4 of /work/users/a/q/aquijano/HCHS/Snakefile:
-Missing input files for rule test:
-var1

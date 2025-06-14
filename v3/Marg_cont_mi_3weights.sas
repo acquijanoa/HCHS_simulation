@@ -239,16 +239,15 @@ ods select none;
                                 x6_2-x6_3 y_gfr_1-y_gfr_3
                                 x14 x12 w_nr_1 w_nr_2 w_nr_3
                                 ;
-
                 output out= mi_miss nmiss=;
                 run;
 
-                PROC TRANSPOSE DATA = MI_MISS(DROP=_TYPE_ _FREQ_) OUT=MI_LONG;
-                RUN;
+                proc transpose data = MI_MISS(DROP=_TYPE_ _FREQ_) OUT=MI_LONG;
+                run;
 
-                PROC SORT DATA = MI_LONG;
-                        BY COL1;
-                RUN;
+                proc sort data = MI_LONG;
+                        by COL1;
+                run;
 
                 proc sql noprint;
                         select distinct _name_ into:var separated by ' ' from mi_long;

@@ -10,7 +10,10 @@ proc printto log = "&homepath./logs/import_sample_data_&sysdate..log"
         DESCRIPTION:  Convert the csv files in sas files
 
         VERSION CONTROL:
-						- 20FEB25: Initialize the code 	
+						- 20feb25: Initialize the code 	
+			 			- 26may25: Include the bghhsub_s2_nr adjusted byr RR_glm and RR_NRadj
+			 					   If the dataset already exists, it only update the file
+			 						
 
 *********************************************************************************************************;
 
@@ -20,34 +23,47 @@ proc printto log = "&homepath./logs/import_sample_data_&sysdate..log"
     /* Define paths and names dynamically */
     %let csv_file = &homepath./data/raw/sample/samplemiss_&i..csv; 
     %let out_table = sample.samplemiss_&i; 
-	proc import
-		datafile="&csv_file"
-        out=&out_table.
-        dbms=csv
-        replace;
-        getnames=yes;
-        guessingrows=100;
-    run;
 
-	* Derive new variables ;
-	data sample.samplemiss_&i; 
-	 	set sample.samplemiss_&i; 
+	%if %sysfunc(exist(sample.samplemiss_&i)) %then %do;
+		data sample.samplemiss_&i;
+			set sample.samplemiss_&i;
+			
+			bghhsub_s2_nr_glm = bghhsub_s2/RR_glm;
+			bghhsub_s2_nr_NRadj = bghhsub_s2/RR_NRadj;
+		run; 
+	%end;
+	%else %do;
+		proc import
+			datafile="&csv_file"
+	        out=&out_table.
+	        dbms=csv
+	        replace;
+	        getnames=yes;
+	        guessingrows=100;
+	    run;
 
-		age_strat_new = 1*(age_base >= 45);
-		if strat in (1,5) then strat_recoded = 1;
-		else if strat in (2,6) then strat_recoded = 2;
-		else if strat in (3,7) then strat_recoded = 3;
-		else if strat in (4,8) then strat_recoded = 4;
+		* Derive new variables ;
+		data sample.samplemiss_&i; 
+		 	set sample.samplemiss_&i; 
 
-		bghhsub_s2_nr = bghhsub_s2/RR;
-	run;
+			age_strat_new = 1*(age_base >= 45);
+			if strat in (1,5) then strat_recoded = 1;
+			else if strat in (2,6) then strat_recoded = 2;
+			else if strat in (3,7) then strat_recoded = 3;
+			else if strat in (4,8) then strat_recoded = 4;
 
-	* sort by strat_recoded;
-	 proc sort data = sample.samplemiss_&i; by strat_recoded; run;
+			bghhsub_s2_nr_glm = bghhsub_s2/RR_glm;
+			bghhsub_s2_nr_NRadj = bghhsub_s2/RR_NRadj;
+		run;
+
+		* sort by strat_recoded;
+		 proc sort data = sample.samplemiss_&i; by strat_recoded; run;
+	 %end;
+
   %end;
 %mend;
 
 /* Execute the macro */
-%process_files(start=101,end=500);
+%process_files(start=1,end=500);
 
 proc printto; run;
